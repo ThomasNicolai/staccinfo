@@ -6,12 +6,12 @@ import {
   CardTitle
 } from '@/components/ui/card';
 
-export default function SuggestionsPage() {
+export default function ArticlesPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Suggestions</CardTitle>
-        <CardDescription>View all suggestions and their votes.</CardDescription>
+        <CardTitle>Articles</CardTitle>
+        <CardDescription>List of articles</CardDescription>
       </CardHeader>
       <CardContent></CardContent>
     </Card>
