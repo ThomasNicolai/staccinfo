@@ -1,33 +1,56 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileAttachment } from '@/components/file-attachment';
-import { Button } from '@/components/ui/button';
+import * as React from 'react';
+import { 
+  Layers, 
+  FileText, 
+  BarChart2, 
+  Shield, 
+  PlusIcon 
+} from 'lucide-react';
+import { WritingBox } from '@/components/ui/writing-box';
+import { ModuleCard } from '@/components/ui/module-card';
+import { FileUpload } from '@/components/ui/file-upload';
 
-export default function CustomersPage() {
+export default function SuggestionsPage() {
   return (
-    <div className="flex min-h-screen bg-dark text-white">
-      <Sidebar />
-      <div className="flex-1 p-6">
-        <Navbar />
-        <div className="text-center">
-          <h1 className="text-4xl font-bold">Vi ønsker dine innspill</h1>
-          <p className="text-gray-400">Her får du fullstendig oversikt over dine moduler hos oss.</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            Vi ønsker dine innspill
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Her får du fullstendig oversikt over dine moduler hos oss. Dersom du ønsker flere moduler kan du ta kontakt med oss.
+          </p>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-4">
-          <Card className="bg-blue-500 p-6 text-white cursor-pointer">
-            <CardTitle>Nytt forslag</CardTitle>
-            <Button className="text-xl">+</Button>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Knapp</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Lorem ipsum dolor sit amet, consectetur elit. Sed do eiusmod...
-              </CardDescription>
-              <FileAttachment fileName="Skjermbilde Escali Financials.zip" />
-            </CardContent>
-          </Card>
+
+        <div className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <ModuleCard 
+              icon={<Layers className="text-blue-600 w-5 h-5" />} 
+              title="Escall Financials" 
+            />
+            <ModuleCard 
+              icon={<Shield className="text-green-600 w-5 h-5" />} 
+              title="Escall risk management" 
+            />
+            <ModuleCard 
+              icon={<BarChart2 className="text-purple-600 w-5 h-5" />} 
+              title="Reports" 
+            />
+            <ModuleCard 
+              icon={<FileText className="text-orange-600 w-5 h-5" />} 
+              title="Data manager" 
+            />
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <PlusIcon className="w-5 h-5 text-blue-600" />
+              <h2 className="text-lg font-semibold text-blue-800">Nytt forslag</h2>
+            </div>
+            <WritingBox className="w-full" />
+            <FileUpload />
+          </div>
         </div>
       </div>
     </div>
