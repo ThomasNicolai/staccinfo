@@ -1,5 +1,12 @@
-// app/layout.tsx
-import './globals.css'; // Ensure your global styles are imported
+import './globals.css';
+
+import { Analytics } from '@vercel/analytics/react';
+
+export const metadata = {
+  title: 'Next.js App Router + NextAuth + Tailwind CSS',
+  description:
+    'A user admin dashboard configured with Next.js, Postgres, NextAuth, Tailwind CSS, TypeScript, and Prettier.'
+};
 
 export default function RootLayout({
   children
@@ -8,11 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>My Dashboard App</title>
-      </head>
-      <body>{children}</body>
+      <body className="flex min-h-screen w-full flex-col">{children}</body>
+      <Analytics />
     </html>
   );
 }
