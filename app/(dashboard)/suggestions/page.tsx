@@ -6,8 +6,9 @@ import {
   CardTitle
 } from '@/components/ui/card';
 
-export default function CustomersPage() {
+export default function SuggestionsPage() {
   return (
+    // Info about page
     <Card>
       <CardHeader>
         <CardTitle>Suggestions</CardTitle>
@@ -15,5 +16,7 @@ export default function CustomersPage() {
       </CardHeader>
       <CardContent></CardContent>
     </Card>
+    // New suggestions component
+    // All suggestions component
   );
 }
