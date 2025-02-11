@@ -7,8 +7,10 @@ import {
   PanelLeft,
   Settings,
   ShoppingCart,
-  Users2
+  Users2,
+  BookOpenText
 } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 import {
   Breadcrumb,
@@ -47,9 +49,9 @@ export default function DashboardLayout({
             <SearchInput />
             <User />
           </header>
-          <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
+          <div className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
             {children}
-          </main>
+          </div>
         </div>
         <Analytics />
       </main>
@@ -61,11 +63,12 @@ function DesktopNav() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <NavItem href="/" label="Hjem">
-          <img src="stacclogoliten.png" alt="" />
-        </NavItem>
         <NavItem href="/" label="Dashboard">
           <Home className="h-5 w-5" />
+        </NavItem>
+
+        <NavItem href="/articles" label="Articles">
+          <BookOpenText className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/products" label="Products">
@@ -117,7 +120,7 @@ function MobileNav() {
             Dashboard
           </Link>
           <Link
-            href="#"
+            href="/articles"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <ShoppingCart className="h-5 w-5" />
