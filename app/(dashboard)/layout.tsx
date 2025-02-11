@@ -62,12 +62,11 @@ function DesktopNav() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+        <NavItem href="/" label="Hjem">
+          <img src="stacclogoliten.png" alt="" />
+        </NavItem>
         <NavItem href="/" label="Dashboard">
           <Home className="h-5 w-5" />
-        </NavItem>
-
-        <NavItem href="#" label="Orders">
-          <ShoppingCart className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/products" label="Products">
