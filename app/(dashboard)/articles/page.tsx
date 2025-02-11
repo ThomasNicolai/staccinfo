@@ -15,5 +15,6 @@ export default function ArticlesPage() {
       </CardHeader>
       <CardContent></CardContent>
     </Card>
+    // All Articles component
   );
 }

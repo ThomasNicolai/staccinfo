@@ -8,6 +8,7 @@ import {
 
 export default function SuggestionsPage() {
   return (
+    // Info about page
     <Card>
       <CardHeader>
         <CardTitle>Suggestions</CardTitle>
@@ -15,5 +16,7 @@ export default function SuggestionsPage() {
       </CardHeader>
       <CardContent></CardContent>
     </Card>
+    // New suggestions component
+    // All suggestions component
   );
 }
