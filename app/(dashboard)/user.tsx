@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuThemeToggle
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 
@@ -37,6 +38,7 @@ export async function User() {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuThemeToggle />
         <DropdownMenuSeparator />
         {user ? (
           <DropdownMenuItem>
