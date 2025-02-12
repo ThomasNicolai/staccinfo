@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import { 
   Layers, 
@@ -6,11 +8,25 @@ import {
   Shield, 
   PlusIcon 
 } from 'lucide-react';
-import { WritingBox } from 'app/(dashboard)/suggestions/writing-box';
-import { ModuleCard } from 'app/(dashboard)/suggestions/module-card';
-import { FileUpload } from '@/components/ui/file-upload';
+import { ModuleCard } from './module-card';
+import { NewSuggestions } from './newSuggestions';
 
 export default function SuggestionsPage() {
+  const handleSend = (message: string, files: File[]) => {
+    let emailBody = message;
+
+    // Add file information to the email body
+    if (files.length > 0) {
+      emailBody += '\n\nAttached files:\n';
+      files.forEach(file => {
+        emailBody += `- ${file.name} (${(file.size / 1024).toFixed(2)} KB)\n`;
+      });
+    }
+
+    const mailtoLink = `mailto:ier@uib.no?subject=Suggestion&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = mailtoLink;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -43,13 +59,12 @@ export default function SuggestionsPage() {
             />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50 dark:bg-gray-800/50 border border-blue-200 dark:border-gray-700 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <PlusIcon className="w-5 h-5 text-blue-600" />
-              <h2 className="text-lg font-semibold text-blue-800">Nytt forslag</h2>
+              <PlusIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-300">Nytt forslag</h2>
             </div>
-            <WritingBox className="w-full" />
-            <FileUpload />
+            <NewSuggestions onSend={handleSend} />
           </div>
         </div>
       </div>

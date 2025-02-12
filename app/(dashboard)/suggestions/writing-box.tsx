@@ -3,30 +3,30 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface WritingBoxProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface WritingBoxProps extends React.HTMLAttributes<HTMLDivElement> {
+  onSend: (message: string) => void;
+}
 
 const WritingBox = React.forwardRef<HTMLDivElement, WritingBoxProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, onSend, ...props }, ref) => {
     const [message, setMessage] = React.useState('');
 
-    // Replace 'CurrentUser' with actual logged-in user info as needed.
-    const handleSend = () => {
-      const userSignature = 'CurrentUser';
-      const mailtoLink = `mailto:ier@uib.no?subject=Suggestion%20from%20${encodeURIComponent(userSignature)}&body=${encodeURIComponent(message)}`;
-      window.location.href = mailtoLink;
+    const handleSendClick = () => {
+      onSend(message);
+      setMessage('');
     };
 
     return (
       <div ref={ref} className={cn("flex gap-2", className)} {...props}>
         <textarea
-          className="w-full p-2 border border-gray-300 rounded text-black"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
           placeholder="Write your suggestion..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={handleSend}
+          className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded"
+          onClick={handleSendClick}
         >
           🚀
         </button>
