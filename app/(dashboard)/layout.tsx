@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import {
   Home,
   LineChart,
@@ -28,6 +29,7 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip';
 import { Analytics } from '@vercel/analytics/react';
+
 import { User } from './user';
 import Providers from './providers';
 import { NavItem } from './nav-item';
@@ -63,7 +65,7 @@ function DesktopNav() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <img src="stacclogoliten.png" alt="" />
+        <img src="/stacclogoliten.png" alt="" />
         <NavItem href="/" label="Dashboard">
           <Home className="h-5 w-5" />
         </NavItem>
@@ -114,8 +116,8 @@ function MobileNav() {
       <SheetContent side="left" className="sm:max-w-xs">
         <nav className="grid gap-6 text-lg font-medium">
           <div className="w-50 flex flex-1">
-            <img src="stacclogoliten.png" alt="" />
-            <img src="stacctekst.png" alt="" className="h-100" />
+            <img src="/stacclogoliten.png" alt="" />
+            <img src="/stacctekst.png" alt="" className="h-100" />
           </div>
           <Link
             href="/"
