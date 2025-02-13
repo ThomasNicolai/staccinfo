@@ -1,30 +1,23 @@
-"use client";
+'use client';
 
 import * as React from 'react';
-import { 
-  Layers, 
-  FileText, 
-  BarChart2, 
-  Shield, 
-  PlusIcon 
-} from 'lucide-react';
-import { ModuleCard } from './module-card';
+import { FileText, PlusIcon } from 'lucide-react';
 import { NewSuggestions } from './newSuggestions';
 
+// To be moved to appropriate api or database file.
+type NewSuggestionDTO = {
+  suggestion: string;
+  files: File[];
+};
+
 export default function SuggestionsPage() {
-  const handleSend = (message: string, files: File[]) => {
-    let emailBody = message;
-
-    // Add file information to the email body
-    if (files.length > 0) {
-      emailBody += '\n\nAttached files:\n';
-      files.forEach(file => {
-        emailBody += `- ${file.name} (${(file.size / 1024).toFixed(2)} KB)\n`;
-      });
-    }
-
-    const mailtoLink = `mailto:ier@uib.no?subject=Suggestion&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoLink;
+  const handleNewSuggestion = (message: string, files: File[]) => {
+    const newSuggestion: NewSuggestionDTO = {
+      suggestion: message,
+      files: files
+    };
+    console.log(newSuggestion);
+    alert('sending new suggestion to api');
   };
 
   return (
@@ -35,36 +28,26 @@ export default function SuggestionsPage() {
             Vi ønsker dine innspill
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Her får du fullstendig oversikt over dine moduler hos oss. Dersom du ønsker flere moduler kan du ta kontakt med oss.
+            Skriv et forslag til oss, du kan legge til én eller flere filer.
           </p>
         </div>
 
+        {/* "Module Card" */}
+        {/* <div className="flex items-center gap-2 bg-blue-600/10 p-3 rounded-lg border border-blue-600/20 hover:bg-blue-600/20 transition-colors">
+          <FileText className="text-orange-600 w-5 h-5" />
+          <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Data manager
+          </span>
+        </div> */}
         <div className="p-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <ModuleCard 
-              icon={<Layers className="text-blue-600 w-5 h-5" />} 
-              title="Escall Financials" 
-            />
-            <ModuleCard 
-              icon={<Shield className="text-green-600 w-5 h-5" />} 
-              title="Escall risk management" 
-            />
-            <ModuleCard 
-              icon={<BarChart2 className="text-purple-600 w-5 h-5" />} 
-              title="Reports" 
-            />
-            <ModuleCard 
-              icon={<FileText className="text-orange-600 w-5 h-5" />} 
-              title="Data manager" 
-            />
-          </div>
-
           <div className="bg-blue-50 dark:bg-gray-800/50 border border-blue-200 dark:border-gray-700 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-2 mb-3">
               <PlusIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-300">Nytt forslag</h2>
+              <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-300">
+                Nytt forslag
+              </h2>
             </div>
-            <NewSuggestions onSend={handleSend} />
+            <NewSuggestions onSend={handleNewSuggestion} />
           </div>
         </div>
       </div>
