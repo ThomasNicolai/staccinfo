@@ -2,16 +2,13 @@ import Link from 'next/link';
 
 import {
   Home,
-  LineChart,
-  Package,
-  Package2,
   PanelLeft,
   Settings,
   ShoppingCart,
-  Users2,
-  BookOpenText
+  BookOpenText,
+  Clapperboard,
+  MessageSquareText
 } from 'lucide-react';
-import { AlertTriangle } from 'lucide-react';
 
 import {
   Breadcrumb,
@@ -74,16 +71,16 @@ function DesktopNav() {
           <BookOpenText className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/products" label="Products">
+        {/* <NavItem href="/products" label="Products">
           <Package className="h-5 w-5" />
-        </NavItem>
+        </NavItem> */}
 
-        <NavItem href="/customers" label="Customers">
-          <Users2 className="h-5 w-5" />
+        <NavItem href="/videos" label="Videos">
+          <Clapperboard className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/suggestions" label="Suggestions">
-          <LineChart className="h-5 w-5" />
+          <MessageSquareText className="h-5 w-5" />
         </NavItem>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -131,27 +128,20 @@ function MobileNav() {
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <ShoppingCart className="h-5 w-5" />
-            Orders
+            Articles
           </Link>
           <Link
-            href="#"
-            className="flex items-center gap-4 px-2.5 text-foreground"
-          >
-            <Package className="h-5 w-5" />
-            Products
-          </Link>
-          <Link
-            href="/products"
+            href="/suggestions"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <Users2 className="h-5 w-5" />
-            Customers
+            <MessageSquareText className="h-5 w-5" />
+            Suggestions
           </Link>
           <Link
-            href="/customers"
+            href="/videos"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <LineChart className="h-5 w-5" />
+            <Clapperboard className="h-5 w-5" />
             Settings
           </Link>
         </nav>
