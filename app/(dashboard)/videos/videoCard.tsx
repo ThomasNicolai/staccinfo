@@ -7,14 +7,22 @@ import {
 } from '@/components/ui/card';
 import { Video } from '@/lib/db';
 
-export default async function VideoCard(props: { video: Video }) {
+export default function VideoCard({ video }: { video: Video }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{props.video.title}</CardTitle>
-        <CardDescription>Length: {props.video.length}</CardDescription>
+    <Card className="h-full">
+      <div className="aspect-[4/3] relative overflow-hidden">
+        <img 
+          src={video.url} 
+          alt="Video thumbnail" 
+          className="object-cover w-full h-full"
+        />
+      </div>
+      <CardHeader className="p-4">
+        <CardTitle className="text-lg">{video.title}</CardTitle>
+        <CardDescription>
+          {Math.floor(video.length / 60)}:{String(video.length % 60).padStart(2, '0')} min
+        </CardDescription>
       </CardHeader>
-      <CardContent></CardContent>
     </Card>
   );
 }
