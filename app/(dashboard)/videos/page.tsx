@@ -4,24 +4,17 @@ import * as React from 'react';
 import VideoCard from './videoCard';
 import Link from 'next/link';
 import type { Video } from '@/lib/db';
+import { useRouter } from 'next/navigation'; 
 
-export default function VideosPage() {
+
+interface VideoClientProps {
+  initialVideos: Video[];
+}
+
+export default function VideoClient({ initialVideos }: VideoClientProps) {
   const [selectedFilter, setSelectedFilter] = React.useState('Alle videoer');
-  const [videos, setVideos] = React.useState<Video[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    fetch('/api/videos')
-      .then(res => res.json())
-      .then(data => {
-        setVideos(data.videos);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching videos:', error);
-        setIsLoading(false);
-      });
-  }, []);
+  const [videos] = React.useState<Video[]>(initialVideos || []);
+  const router = useRouter();
 
   const filters = [
     'Alle videoer',
@@ -50,14 +43,6 @@ export default function VideosPage() {
       }
     });
   }, [selectedFilter, videos]);
-  
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -87,6 +72,7 @@ export default function VideosPage() {
             <Link 
               href={`/videos/${video.slug}`} 
               key={video.id}
+              onClick={() => router.push(`/videos/${video.slug}`)}
               className="block transform hover:scale-105 transition-transform"
             >
               <VideoCard video={video} />
