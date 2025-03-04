@@ -1,5 +1,5 @@
 import { getVideos } from '@/lib/db';
-import VideoCard from './videoCard';
+import VideoCard from './[slug]/videoCard';
 import Link from 'next/link';
 
 export default async function VideosPage() {

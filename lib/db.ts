@@ -88,37 +88,34 @@ export async function getVideos(): Promise<{
     slug: 'kom-i-gang-med-obligasjoner',
     length: 180,
     title: 'Kom i gang med obligasjoner',
-    url: 'www.example.com'
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   const dummyVideo2: Video = {
     id: '2',
-    slug: 'kom-i-gang-med-obligasjoner',
+    slug: 'kom-i-gang-med-aksjer',
     length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'www.example.com'
+    title: 'Kom i gang med aksjer',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   const dummyVideo3: Video = {
     id: '3',
-    slug: 'kom-i-gang-med-obligasjoner',
+    slug: 'kom-i-gang-med-investeringer',
     length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'www.example.com'
+    title: 'Kom i gang med investeringer',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3];
   return { videos: dummyVideos };
 }
-export async function getVideo(slug: string): Promise<{
-  video: Video;
-}> {
-  const dummyVideo1: Video = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'www.example.com'
-  };
-  return { video: dummyVideo1 };
+export async function getVideo(slug: string): Promise<{ video: Video }> {
+  const { videos } = await getVideos();
+  const video = videos.find((v) => v.slug === slug);
+  return { video: video! };
 }
+
 export async function getArticles(): Promise<{
   articles: Article[];
 }> {
