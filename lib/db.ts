@@ -88,23 +88,26 @@ export async function getVideos(): Promise<{
     slug: 'kom-i-gang-med-obligasjoner',
     length: 180,
     title: 'Kom i gang med obligasjoner',
-    url: 'https://example.com/videos/obligasjoner.mp4'
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   
   const dummyVideo2: Video = {
     id: '2',
-    slug: 'transaksjonsregistrering',
-    length: 240,
-    title: 'Transaksjonsregistrering',
-    url: 'https://example.com/videos/transaksjoner.mp4'
+    slug: 'kom-i-gang-med-aksjer',
+    length: 180,
+    title: 'Kom i gang med aksjer',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   
   const dummyVideo3: Video = {
     id: '3',
-    slug: 'rapportering',
-    length: 300,
-    title: 'Rapportering',
-    url: 'https://example.com/videos/rapporter.mp4'
+    slug: 'kom-i-gang-med-investeringer',
+    length: 180,
+    title: 'Kom i gang med investeringer',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+
   };
   const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3];
   return { videos: dummyVideos };
@@ -112,22 +115,14 @@ export async function getVideos(): Promise<{
 export async function getVideo(slug: string): Promise<{
   video: Video;
 }> {
-  const { videos } = await getVideos();
-  const video = videos.find(v => v.slug === slug);
-  
-  if (!video) {
-    return {
-      video: {
-        id: '1',
-        slug: slug,
-        length: 180,
-        title: 'Video ikke funnet',
-        url: 'https://example.com/videos/sample.mp4'
-      }
-    };
-  }
-  
-  return { video };
+  const dummyVideo1: Video = {
+    id: '1',
+    slug: 'kom-i-gang-med-obligasjoner',
+    length: 180,
+    title: 'Kom i gang med obligasjoner',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+  };
+  return { video: dummyVideo1 };
 }
 export async function getArticles(): Promise<{
   articles: Article[];
