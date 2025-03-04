@@ -16,25 +16,6 @@ export default function VideoClient({ initialVideos }: VideoClientProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
 
-  // Optional: Client-side data fetching for fresh data
-  React.useEffect(() => {
-    // You can uncomment this if you want to fetch videos from an API endpoint
-    // This would require creating an API route to serve videos
-    /*
-    setIsLoading(true);
-    fetch('/api/videos')
-      .then(res => res.json())
-      .then(data => {
-        setVideos(data.videos);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching videos:', error);
-        setIsLoading(false);
-      });
-    */
-  }, []);
-
   const filters = [
     'Alle videoer',
     'Oppsett',
