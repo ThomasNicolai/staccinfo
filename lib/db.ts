@@ -110,12 +110,18 @@ export async function getVideos(): Promise<{
   const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3];
   return { videos: dummyVideos };
 }
-export async function getVideo(slug: string): Promise<{ video: Video }> {
-  const { videos } = await getVideos();
-  const video = videos.find((v) => v.slug === slug);
-  return { video: video! };
+export async function getVideo(slug: string): Promise<{
+  video: Video;
+}> {
+  const dummyVideo1: Video = {
+    id: '1',
+    slug: 'kom-i-gang-med-obligasjoner',
+    length: 180,
+    title: 'Kom i gang med obligasjoner',
+    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
+  };
+  return { video: dummyVideo1 };
 }
-
 export async function getArticles(): Promise<{
   articles: Article[];
 }> {

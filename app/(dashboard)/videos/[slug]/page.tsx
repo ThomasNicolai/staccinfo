@@ -1,20 +1,14 @@
 // app/videos/[slug]/page.tsx
-import { getVideo, getVideos } from '@/lib/db';
+import { getVideo } from '@/lib/db';
 import Link from 'next/link';
-
-export async function generateStaticParams() {
-  const { videos } = await getVideos();
-  return videos.map((video) => ({
-    slug: video.slug
-  }));
-}
 
 export default async function VideoDetailPage({
   params
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { video } = await getVideo(params.slug);
+  const slug = (await params).slug;
+  const { video } = await getVideo(slug);
 
   if (!video) {
     return <div>Video not found.</div>;
@@ -30,13 +24,12 @@ export default async function VideoDetailPage({
       </Link>
       <h1>{video.title}</h1>
       {/* Using a fixed height container for debugging */}
-      <div style={{ width: '100%', height: '400px', marginBottom: '1rem' }}>
+      <div style={{ aspectRatio: '16 / 9' }}>
         <iframe
           src={video.url}
           title={video.title}
           width="100%"
           height="100%"
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
