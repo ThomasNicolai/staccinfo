@@ -91,6 +91,7 @@ export async function getVideos(): Promise<{
     url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
 
   };
+  
   const dummyVideo2: Video = {
     id: '2',
     slug: 'kom-i-gang-med-aksjer',
@@ -99,6 +100,7 @@ export async function getVideos(): Promise<{
     url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
 
   };
+  
   const dummyVideo3: Video = {
     id: '3',
     slug: 'kom-i-gang-med-investeringer',
