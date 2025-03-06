@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { forwardRef, useState } from 'react';
 import { WritingBox } from './writing-box';
 import { cn } from '@/lib/utils';
 
@@ -9,9 +9,9 @@ interface NewSuggestionsProps {
   className?: string;
 }
 
-const NewSuggestions = React.forwardRef<HTMLDivElement, NewSuggestionsProps>(
+const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
   ({ onSend, className, ...props }, ref) => {
-    const [files, setFiles] = React.useState<File[]>([]);
+    const [files, setFiles] = useState<File[]>([]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {

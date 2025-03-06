@@ -1,10 +1,4 @@
 import Link from 'next/link';
-import * as React from 'react';
-
-type File = {
-  id: number;
-  file: string;
-};
 
 type Suggestion = {
   id: number;
