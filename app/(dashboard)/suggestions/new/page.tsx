@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { FileText, PlusIcon } from 'lucide-react';
-import { NewSuggestions } from '../newSuggestions';
+import { NewSuggestions } from './newSuggestions';
 
 // To be moved to appropriate api or database file.
 type NewSuggestionDTO = {

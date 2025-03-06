@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import { WritingBox } from './writing-box';
@@ -25,12 +25,12 @@ const NewSuggestions = React.forwardRef<HTMLDivElement, NewSuggestionsProps>(
     };
 
     return (
-      <div ref={ref} className={cn("space-y-4", className)} {...props}>
+      <div ref={ref} className={cn('space-y-4', className)} {...props}>
         <WritingBox onSend={handleMessageSend} />
-        
+
         <div className="flex flex-col gap-2">
-          <label 
-            htmlFor="file-upload" 
+          <label
+            htmlFor="file-upload"
             className="cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-center"
           >
             📎 Attach files
@@ -48,7 +48,9 @@ const NewSuggestions = React.forwardRef<HTMLDivElement, NewSuggestionsProps>(
                 <div key={index} className="flex items-center gap-2">
                   <span>📄 {file.name}</span>
                   <button
-                    onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                    onClick={() =>
+                      setFiles(files.filter((_, i) => i !== index))
+                    }
                     className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
                   >
                     ✕
