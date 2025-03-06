@@ -5,27 +5,11 @@
 @layer base {
   :root {
     /* Light Mode Colors */
-    --background: 0 0% 100%; /* white */
-    --foreground: 220 48% 18%; /* dark blue text */
-
-    --primary: 229 76% 62%; /* bright blue */
-    --primary-foreground: 0 0% 100%; /* white text on primary */
-
-    --secondary: 220 76% 95%; /* very light blue */
-    --secondary-foreground: 229 76% 62%; /* primary blue */
-
-    --muted: 220 76% 95%; /* very light blue */
-    --muted-foreground: 220 5% 45%; /* muted gray text */
-
-    --accent: 220 76% 95%; /* very light blue */
-    --accent-foreground: 229 76% 62%; /* primary blue */
-
-    --destructive: 0 84.2% 60.2%; /* keeping standard red */
-    --destructive-foreground: 0 0% 100%; /* white text on destructive */
+    --background: 233 58% 94%; /* white */
+    --foreground: 233 58% 94%; /* dark blue text */
 
     --border: 220 13% 91%; /* light gray border */
     --input: 220 13% 91%; /* light gray input */
-    --ring: 229 76% 62%; /* primary blue ring */
 
     --radius: 0.5rem;
   }
@@ -35,24 +19,8 @@
     --background: 220 48% 13%; /* deep navy blue */
     --foreground: 0 0% 100%; /* white text */
 
-    --primary: 229 76% 62%; /* bright blue */
-    --primary-foreground: 0 0% 100%; /* white text on primary */
-
-    --secondary: 220 48% 22%; /* muted blue section color */
-    --secondary-foreground: 0 0% 100%; /* white text */
-
-    --muted: 220 48% 22%; /* muted blue section color */
-    --muted-foreground: 220 13% 65%; /* light gray text */
-
-    --accent: 220 48% 22%; /* muted blue section color */
-    --accent-foreground: 0 0% 100%; /* white text */
-
-    --destructive: 0 62.8% 30.6%; /* dark red */
-    --destructive-foreground: 0 0% 100%; /* white text on destructive */
-
     --border: 220 48% 22%; /* muted blue border */
     --input: 220 48% 22%; /* muted blue input */
-    --ring: 229 76% 62%; /* bright blue ring */
   }
 }
 
@@ -60,9 +28,28 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(106,129,245,0.3), rgba(106,129,245,0.1));
+    border-radius: 50%;
+    z-index: -1;
   }
+
+  /* Position the circles where you want */
+  body::before {
+    top: 80%;
+    left: 10%;
+  }
+
+  body::after {
+    top: 1%;
+    right: 10%;
+  }
+
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -80,3 +67,9 @@ input[type='search']::-moz-search-cancel-button {
 input[type='search']::-ms-clear {
   display: none;
 }
+
+.nav-bg {
+  background-color: hsl(220 48% 13%) !important; 
+  color: hsl(233, 58%, 94%) !important;
+}
+
