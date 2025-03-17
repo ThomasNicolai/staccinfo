@@ -186,8 +186,11 @@ export async function deleteProductById(id: number) {
   await db.delete(products).where(eq(products.id, id));
 }
 
+
+// Updated function with tag filtering and sorting
 export async function getSuggestions(
-  tag_name?: string
+  tag_name?: string,
+  sortBy: 'newest' | 'oldest' | 'tag' = 'newest'
 ) {
   // Create base query
   let baseQuery = db.select({
@@ -205,19 +208,6 @@ export async function getSuggestions(
   // Filter by tag if specified
   if (tag_name) {
     conditions.push(eq(suggestions.tag, tag_name));
-  }
-  
-  // Add sorting
-  switch (sortBy) {
-    case 'newest':
-      baseQuery = baseQuery.orderBy(desc(suggestions.created_at));
-      break;
-    case 'oldest':
-      baseQuery = baseQuery.orderBy(asc(suggestions.created_at));
-      break;
-    case 'tag':
-      baseQuery = baseQuery.orderBy(asc(suggestions.tag));
-      break;
   }
   
   // Apply conditions if any exist
@@ -240,6 +230,23 @@ export async function getSuggestionTags() {
   return results.map(result => result.tag);
 }
 
+// Function to get a single suggestion by ID
+export async function getSuggestion(id: number) {
+  const result = await db
+    .select({
+      id: suggestions.id,
+      text: suggestions.suggestion_text,
+      user_id: suggestions.user_id,
+      created_at: suggestions.created_at,
+      tag: suggestions.tag
+    })
+    .from(suggestions)
+    .where(eq(suggestions.id, id))
+    .limit(1)
+    .execute();
+
+  return result[0] || null;
+}
 
 // 2. Create a function to get a user by ID
 export async function getUserById(id: number) {
