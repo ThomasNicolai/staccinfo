@@ -38,6 +38,12 @@ export const suggestions = pgTable('suggestions', {
   tag: text('tag_selection').notNull()
 });
 
+// 1. Define the Users table schema
+export const users = pgTable('users', {
+  id: serial('user_id').primaryKey(),
+  username: text('username').notNull()
+});
+
 export type Video = {
   id: string;
   slug: string;
@@ -180,35 +186,24 @@ export async function deleteProductById(id: number) {
 
 
 // Updated function with tag filtering and sorting
-export async function getSuggestions(tag_name?: string, sortBy: 'newest' | 'oldest' | 'tag' = 'newest') {
-  // Start building the query - using the correct property names as defined in schema
-  let query = db.select({
-    id: suggestions.id,
-    text: suggestions.suggestion_text,
-    user_id: suggestions.user_id,
-    created_at: suggestions.created_at,
-    tag: suggestions.tag
-  }).from(suggestions);
-  
-  // Add tag filter if provided
-  if (tag_name) {
-    query = query.where(eq(suggestions.tag, tag_name));
-  }
-  
-  // Add sorting
-  switch (sortBy) {
-    case 'newest':
-      query = query.orderBy(desc(suggestions.created_at));
-      break;
-    case 'oldest':
-      query = query.orderBy(asc(suggestions.created_at));
-      break;
-    case 'tag':
-      query = query.orderBy(asc(suggestions.tag));
-      break;
-  }
-  
-  return await query;
+export async function getSuggestions(
+  tag_name?: string,
+  sortBy: 'newest' | 'oldest' | 'tag' = 'newest'
+) {
+  // Build the query using the JS property names
+  let query = db
+    .select({
+      id: suggestions.id,                   // JS property: id (DB column suggestion_id)
+      text: suggestions.suggestion_text,    // JS property: suggestion_text
+      user_id: suggestions.user_id,         // JS property: user_id (DB column creator_user_id)
+      created_at: suggestions.created_at,   // JS property: created_at
+      tag: suggestions.tag                  // JS property: tag (DB column tag_selection)
+    })
+    .from(suggestions);
+
+
+  // Execute the query to get the results (this converts the query builder to the final result type)
+  return await query.execute();
 }
 
 // Function to get all available tags (for filtering options)
@@ -225,16 +220,53 @@ export async function getSuggestionTags() {
 
 // Function to get a single suggestion by ID
 export async function getSuggestion(id: number) {
-  const result = await db.select({
-    id: suggestions.id,
-    text: suggestions.suggestion_text,
-    user_id: suggestions.user_id,
-    created_at: suggestions.created_at,
-    tag: suggestions.tag
-  })
-  .from(suggestions)
-  .where(eq(suggestions.id, id))
-  .limit(1);
+  const result = await db
+    .select({
+      id: suggestions.id,
+      text: suggestions.suggestion_text,
+      user_id: suggestions.user_id,
+      created_at: suggestions.created_at,
+      tag: suggestions.tag
+    })
+    .from(suggestions)
+    .where(eq(suggestions.id, id))
+    .limit(1)
+    .execute();
+
+  return result[0] || null;
+}
+
+// 2. Create a function to get a user by ID
+export async function getUserById(id: number) {
+  const result = await db
+    .select({
+      id: users.id,
+      username: users.username
+    })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1)
+    .execute();
+  
+  return result[0] || null;
+}
+
+// 3. Update getSuggestion to include user data via join
+export async function getSuggestionWithUser(id: number) {
+  const result = await db
+    .select({
+      id: suggestions.id,
+      text: suggestions.suggestion_text,
+      user_id: users.id,
+      username: users.username,
+      created_at: suggestions.created_at,
+      tag: suggestions.tag
+    })
+    .from(suggestions)
+    .leftJoin(users, eq(suggestions.user_id, users.id))
+    .where(eq(suggestions.id, id))
+    .limit(1)
+    .execute();
   
   return result[0] || null;
 }
