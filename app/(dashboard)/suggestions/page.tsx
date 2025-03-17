@@ -75,7 +75,11 @@ export default async function SuggestionsPage({
             <div className="w-full h-full bg-white p-4 border border-gray-200 rounded-xl hover:bg-gray-50">
               <p className="font-bold">{item.text}</p>
               <div className="mt-2 text-sm text-gray-600">
-                <p>User ID: {item.user_id}</p>
+                {item.is_anonymous ? (
+                  <p>Posted by: Anonymous</p>
+                ) : (
+                  <p>User ID: {item.user_id}</p>
+                )}
                 <p>Created: {new Date(item.created_at).toLocaleDateString()}</p>
                 <p>
                   Tag:{' '}

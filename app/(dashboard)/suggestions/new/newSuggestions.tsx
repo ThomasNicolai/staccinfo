@@ -5,61 +5,86 @@ import { WritingBox } from './writing-box';
 import { cn } from '@/lib/utils';
 
 interface NewSuggestionsProps {
-  onSend: (message: string, files: File[]) => void;
+  onSend: (message: string, tag: string, isAnonymous: boolean) => void;
   className?: string;
 }
 
 const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
   ({ onSend, className, ...props }, ref) => {
-    const [files, setFiles] = useState<File[]>([]);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        setFiles(Array.from(e.target.files));
-      }
+    const [message, setMessage] = useState('');
+    const [tag, setTag] = useState('');
+    const [isAnonymous, setIsAnonymous] = useState(false);
+    
+    const handleMessageChange = (message: string) => {
+      setMessage(message);
     };
-
-    const handleMessageSend = (message: string) => {
-      onSend(message, files);
-      setFiles([]); // Clear files after sending
+    
+    const handleSendClick = () => {
+      onSend(message, tag, isAnonymous);
+      setMessage('');
+      setTag('');
+      setIsAnonymous(false);
     };
 
     return (
       <div ref={ref} className={cn('space-y-4', className)} {...props}>
-        <WritingBox onSend={handleMessageSend} />
-
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-center"
+        {/* Tag input field */}
+        <div className="mb-4">
+          <label 
+            htmlFor="tag-input" 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           >
-            📎 Attach files
+            Tag (required)
           </label>
           <input
-            id="file-upload"
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleFileChange}
+            id="tag-input"
+            type="text"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            placeholder="Enter a tag (e.g. 'feature', 'bug', 'improvement')"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
           />
-          {files.length > 0 && (
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              {files.map((file, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span>📄 {file.name}</span>
-                  <button
-                    onClick={() =>
-                      setFiles(files.filter((_, i) => i !== index))
-                    }
-                    className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
+        
+        {/* Message input */}
+        <div className="mb-4">
+          <label 
+            htmlFor="suggestion-input" 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            Your suggestion (required)
+          </label>
+          <WritingBox 
+            onSend={handleMessageChange} 
+            onSubmit={handleSendClick} 
+          />
+        </div>
+        
+        {/* Anonymous checkbox */}
+        <div className="mb-4 flex items-center">
+          <input
+            id="anonymous-checkbox"
+            type="checkbox"
+            checked={isAnonymous}
+            onChange={(e) => setIsAnonymous(e.target.checked)}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label
+            htmlFor="anonymous-checkbox"
+            className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+          >
+            Submit anonymously
+          </label>
+        </div>
+        
+        {/* Submit button */}
+        <button
+          onClick={handleSendClick}
+          disabled={!message.trim() || !tag.trim()}
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Submit Suggestion
+        </button>
       </div>
     );
   }
