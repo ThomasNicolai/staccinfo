@@ -11,7 +11,7 @@ import {
   pgEnum,
   serial
 } from 'drizzle-orm/pg-core';
-import { count, eq, ilike, desc, asc } from 'drizzle-orm';
+import { count, eq, ilike, desc, asc, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { boolean, datetime } from 'drizzle-orm/mysql-core';
 
@@ -190,20 +190,28 @@ export async function getSuggestions(
   tag_name?: string,
   sortBy: 'newest' | 'oldest' | 'tag' = 'newest'
 ) {
-  // Build the query using the JS property names
-  let query = db
+  const baseQuery = db
     .select({
-      id: suggestions.id,                   // JS property: id (DB column suggestion_id)
-      text: suggestions.suggestion_text,    // JS property: suggestion_text
-      user_id: suggestions.user_id,         // JS property: user_id (DB column creator_user_id)
-      created_at: suggestions.created_at,   // JS property: created_at
-      tag: suggestions.tag                  // JS property: tag (DB column tag_selection)
+      id: suggestions.id,
+      text: suggestions.suggestion_text,
+      user_id: suggestions.user_id,
+      created_at: suggestions.created_at,
+      tag: suggestions.tag
     })
     .from(suggestions);
 
+  // Build conditions array
+  const conditions = [];
+  if (tag_name) {
+    conditions.push(eq(suggestions.tag, tag_name));
+  }
 
-  // Execute the query to get the results (this converts the query builder to the final result type)
-  return await query.execute();
+  // Apply conditions if any exist
+  const finalQuery = conditions.length > 0
+    ? baseQuery.where(and(...conditions))
+    : baseQuery;
+
+  return finalQuery.execute();
 }
 
 // Function to get all available tags (for filtering options)

@@ -1,10 +1,21 @@
 import Link from 'next/link';
 import { PlusIcon } from 'lucide-react';
-import { getSuggestions } from '@/lib/db';
+import { getSuggestions, getSuggestionTags } from '@/lib/db';
 
-export default async function SuggestionsPage() {
-  // Fetch all suggestions from the database
-  const suggestions = await getSuggestions();
+export default async function SuggestionsPage({
+  searchParams
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  // Get the tag filter from URL query params
+  const tagParam = searchParams.tag;
+  const selectedTag = typeof tagParam === 'string' ? tagParam : undefined;
+
+  // Get all available tags for filter buttons
+  const allTags = await getSuggestionTags();
+
+  // Fetch suggestions filtered by selected tag
+  const suggestions = await getSuggestions(selectedTag);
 
   return (
     <div className="background min-h-screen p-4 pt-16">
@@ -19,6 +30,26 @@ export default async function SuggestionsPage() {
         <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-2">
           Du kan legge til én eller flere filer
         </p>
+      </div>
+
+      {/* Tag Filter Buttons */}
+      <div className="flex flex-wrap gap-2 justify-center mb-6">
+        <Link
+          href="/suggestions"
+          className={`px-4 py-2 rounded-lg font-medium ${!selectedTag ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
+        >
+          Alle
+        </Link>
+
+        {allTags.map((tag) => (
+          <Link
+            key={tag}
+            href={`/suggestions?tag=${encodeURIComponent(tag)}`}
+            className={`px-4 py-2 rounded-lg font-medium ${selectedTag === tag ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
+          >
+            {tag}
+          </Link>
+        ))}
       </div>
 
       {/* Flex container for the boxes */}
@@ -56,6 +87,12 @@ export default async function SuggestionsPage() {
             </div>
           </Link>
         ))}
+
+        {suggestions.length === 0 && (
+          <div className="w-full text-center p-8">
+            <p>No suggestions found with this tag.</p>
+          </div>
+        )}
       </div>
     </div>
   );
