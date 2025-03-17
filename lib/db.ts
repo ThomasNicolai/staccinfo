@@ -186,11 +186,8 @@ export async function deleteProductById(id: number) {
   await db.delete(products).where(eq(products.id, id));
 }
 
-
-// Updated function with tag filtering and sorting
 export async function getSuggestions(
-  tag_name?: string,
-  sortBy: 'newest' | 'oldest' | 'tag' = 'newest'
+  tag_name?: string
 ) {
   // Create base query
   let baseQuery = db.select({
@@ -243,23 +240,6 @@ export async function getSuggestionTags() {
   return results.map(result => result.tag);
 }
 
-// Function to get a single suggestion by ID
-export async function getSuggestion(id: number) {
-  const result = await db
-    .select({
-      id: suggestions.id,
-      text: suggestions.suggestion_text,
-      user_id: suggestions.user_id,
-      created_at: suggestions.created_at,
-      tag: suggestions.tag
-    })
-    .from(suggestions)
-    .where(eq(suggestions.id, id))
-    .limit(1)
-    .execute();
-
-  return result[0] || null;
-}
 
 // 2. Create a function to get a user by ID
 export async function getUserById(id: number) {
