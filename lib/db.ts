@@ -11,8 +11,9 @@ import {
   pgEnum,
   serial
 } from 'drizzle-orm/pg-core';
-import { count, eq, ilike } from 'drizzle-orm';
+import { count, eq, ilike, desc, asc } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
+import { boolean, datetime } from 'drizzle-orm/mysql-core';
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
@@ -26,6 +27,15 @@ export const products = pgTable('products', {
   price: numeric('price', { precision: 10, scale: 2 }).notNull(),
   stock: integer('stock').notNull(),
   availableAt: timestamp('available_at').notNull()
+});
+
+// First, define the suggestions table
+export const suggestions = pgTable('suggestions', {
+  id: serial('suggestion_id').primaryKey(),
+  user_id: integer('creator_user_id').notNull(),
+  suggestion_text: text('suggestion_text').notNull(),
+  created_at: timestamp('created_at').notNull(),
+  tag: text('tag_selection').notNull()
 });
 
 export type Video = {
@@ -167,3 +177,65 @@ export async function getArticle(slug: string): Promise<{
 export async function deleteProductById(id: number) {
   await db.delete(products).where(eq(products.id, id));
 }
+
+
+// Updated function with tag filtering and sorting
+export async function getSuggestions(tag_name?: string, sortBy: 'newest' | 'oldest' | 'tag' = 'newest') {
+  // Start building the query - using the correct property names as defined in schema
+  let query = db.select({
+    id: suggestions.id,
+    text: suggestions.suggestion_text,
+    user_id: suggestions.user_id,
+    created_at: suggestions.created_at,
+    tag: suggestions.tag
+  }).from(suggestions);
+  
+  // Add tag filter if provided
+  if (tag_name) {
+    query = query.where(eq(suggestions.tag, tag_name));
+  }
+  
+  // Add sorting
+  switch (sortBy) {
+    case 'newest':
+      query = query.orderBy(desc(suggestions.created_at));
+      break;
+    case 'oldest':
+      query = query.orderBy(asc(suggestions.created_at));
+      break;
+    case 'tag':
+      query = query.orderBy(asc(suggestions.tag));
+      break;
+  }
+  
+  return await query;
+}
+
+// Function to get all available tags (for filtering options)
+export async function getSuggestionTags() {
+  const results = await db
+    .selectDistinct({
+      tag: suggestions.tag
+    })
+    .from(suggestions)
+    .orderBy(suggestions.tag);
+  
+  return results.map(result => result.tag);
+}
+
+// Function to get a single suggestion by ID
+export async function getSuggestion(id: number) {
+  const result = await db.select({
+    id: suggestions.id,
+    text: suggestions.suggestion_text,
+    user_id: suggestions.user_id,
+    created_at: suggestions.created_at,
+    tag: suggestions.tag
+  })
+  .from(suggestions)
+  .where(eq(suggestions.id, id))
+  .limit(1);
+  
+  return result[0] || null;
+}
+
