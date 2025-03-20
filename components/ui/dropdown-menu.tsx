@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle, Sun, Moon } from 'lucide-react';
-
+import { useTheme } from "next-themes";
 import { cn } from '@/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
@@ -182,25 +182,13 @@ const DropdownMenuShortcut = ({
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
 
 const DropdownMenuThemeToggle = () => {
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
+  const { theme, setTheme } = useTheme();
+  if (!theme) return null;
 
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDarkMode = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches;
+  const isDarkMode = theme === "dark";
 
-    const theme = savedTheme ? savedTheme : prefersDarkMode ? 'dark' : 'light';
-    setIsDarkMode(theme === 'dark');
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-  };
+  // Bytter ut manuell håndtering av tema (useState og useEffect).
+  // next-themes håndterer lagring av tema i lokalt, og oppdaterer i Tailwind dark mode klasse.
 
   return (
     <DropdownMenuPrimitive.Item
@@ -210,7 +198,8 @@ const DropdownMenuThemeToggle = () => {
       )}
       onSelect={(e) => {
         e.preventDefault(); // Prevent dropdown from closing
-        toggleTheme();
+        setTheme(isDarkMode ? "light" : "dark");
+
       }}
     >
       {isDarkMode ? (
@@ -222,6 +211,11 @@ const DropdownMenuThemeToggle = () => {
     </DropdownMenuPrimitive.Item>
   );
 };
+
+// Dropdown komponent henter gjeldende tema med next-themes UseTheme. 
+// Bytter mellom light/dark ved å kalle setThemes, og oppdaterer i local storage og tailwinds darkmode klasse.
+// Sun/Moon ikon endres dynamisk basert på aktivt tema. 
+
 
 export {
   DropdownMenu,
