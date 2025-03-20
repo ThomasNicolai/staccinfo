@@ -1,6 +1,6 @@
 import './globals.css';
 import { Analytics } from '@vercel/analytics/react';
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'Next.js App Router + NextAuth + Tailwind CSS',
@@ -25,5 +25,5 @@ export default function RootLayout({
   );
 }
 
-// Importert og wrappet innhold i next-themes ThemeProvider i rot. 
+// Importert og wrappet innhold i next-themes ThemeProvider i rot.
 // Bytte ut manuell theme prosess. Tailwin DarkMode skal settes korrekt ved innlastning av side.
