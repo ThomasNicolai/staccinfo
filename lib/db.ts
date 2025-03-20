@@ -186,7 +186,6 @@ export async function deleteProductById(id: number) {
   await db.delete(products).where(eq(products.id, id));
 }
 
-
 // Updated function with tag filtering and sorting
 export async function getSuggestions(
   tag_name?: string,

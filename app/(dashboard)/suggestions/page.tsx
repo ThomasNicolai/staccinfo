@@ -8,7 +8,7 @@ export default async function SuggestionsPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   // Get the tag filter from URL query params
-  const tagParam = searchParams.tag;
+  const tagParam = await searchParams.tag;
   const selectedTag = typeof tagParam === 'string' ? tagParam : undefined;
 
   // Get all available tags for filter buttons
