@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { PlusIcon } from 'lucide-react';
-import { SuggestionItem } from './suggestionItem';
+import { SuggestionBox } from './suggestion-box';
+import { NewSuggestionButton } from './new-suggestion-button';
 
-export type Suggestion = {
+type Suggestion = {
   id: number;
   text: string;
   tag: string;
@@ -21,7 +20,6 @@ export function SuggestionsClient({
   initialSuggestions: Suggestion[];
   allTags: string[];
 }) {
-  // Just keep track of the selected tag and filtered suggestions
   const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
   const [displayedSuggestions, setDisplayedSuggestions] =
     useState(initialSuggestions);
@@ -56,7 +54,7 @@ export function SuggestionsClient({
         </p>
       </div>
 
-      {/* Simple Tag Filter Buttons */}
+      {/* Tag Filter Buttons */}
       <div className="flex flex-wrap gap-2 justify-center mb-6">
         <button
           onClick={() => handleTagClick(undefined)}
@@ -78,20 +76,12 @@ export function SuggestionsClient({
 
       {/* Suggestions grid */}
       <div className="flex h-auto space-x-4 mt-6 px-4 flex-wrap">
-        {/* New Suggestion Button */}
-        <Link
-          href="suggestions/new"
-          className="flex-1 block min-w-[200px] mb-4"
-        >
-          <button className="w-full h-full bg-blue-500 hover:bg-blue-600 text-white text-left rounded-xl items-start justify-between p-4">
-            <span>Nytt forslag</span>
-            <PlusIcon className="h-5 w-5" />
-          </button>
-        </Link>
+        {/* New Suggestion Button Component */}
+        <NewSuggestionButton />
 
-        {/* Display filtered suggestions */}
-        {displayedSuggestions.map((item) => (
-          <SuggestionItem suggestion={item} key={item.id}></SuggestionItem>
+        {/* Display filtered suggestions using SuggestionBox components */}
+        {displayedSuggestions.map((suggestion) => (
+          <SuggestionBox key={suggestion.id} suggestion={suggestion} />
         ))}
 
         {displayedSuggestions.length === 0 && (
