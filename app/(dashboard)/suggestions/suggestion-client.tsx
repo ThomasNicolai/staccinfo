@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { PlusIcon } from 'lucide-react';
+import { SuggestionItem } from './suggestionItem';
 
-type Suggestion = {
+export type Suggestion = {
   id: number;
   text: string;
   tag: string;
@@ -90,25 +91,7 @@ export function SuggestionsClient({
 
         {/* Display filtered suggestions */}
         {displayedSuggestions.map((item) => (
-          <Link
-            href={`/suggestions/${item.id}`}
-            key={item.id}
-            className="flex-1 block min-w-[200px] mb-4"
-          >
-            <div className="w-full h-full bg-white p-4 border border-gray-200 rounded-xl hover:bg-gray-50">
-              <p className="font-bold">{item.text}</p>
-              <div className="mt-2 text-sm text-gray-600">
-                <p>User ID: {item.user_id}</p>
-                <p>Created: {new Date(item.created_at).toLocaleDateString()}</p>
-                <p>
-                  Tag:{' '}
-                  <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {item.tag}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </Link>
+          <SuggestionItem suggestion={item} key={item.id}></SuggestionItem>
         ))}
 
         {displayedSuggestions.length === 0 && (
