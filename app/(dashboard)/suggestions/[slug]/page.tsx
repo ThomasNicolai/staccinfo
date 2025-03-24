@@ -1,16 +1,17 @@
 import { getSuggestionWithUser } from '@/lib/db';
 import Link from 'next/link';
+import { VoteButton } from '../VoteButton';
 
 export default async function SuggestionDetailPage({
   params
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>; 
 }) {
   const slug = (await params).slug;
   const suggestionId = parseInt(slug, 10);
-
-  // Use the new function that includes user data
-  const suggestionData = await getSuggestionWithUser(suggestionId);
+  
+  // Pass dummy user ID 1 for now (would come from auth in real app)
+  const suggestionData = await getSuggestionWithUser(suggestionId, 1);
 
   if (!suggestionData) {
     return (
@@ -32,7 +33,6 @@ export default async function SuggestionDetailPage({
         Forslag fra {suggestionData.username}
       </h1>
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-        {/* Display username instead of just user ID */}
         <div className="flex justify-between items-center mb-4">
           <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
             {suggestionData.tag}
@@ -44,6 +44,15 @@ export default async function SuggestionDetailPage({
         </div>
 
         <p className="text-lg mb-4">{suggestionData.text}</p>
+        
+        {/* Add vote button */}
+        <div className="mt-4">
+          <VoteButton 
+            suggestionId={suggestionData.id} 
+            initialVoteCount={suggestionData.vote_count || 0} 
+            initialUserHasVoted={suggestionData.user_has_voted || false}
+          />
+        </div>
 
         <div className="mt-6 pt-4 border-t border-gray-100">
           <p className="text-sm text-gray-600">

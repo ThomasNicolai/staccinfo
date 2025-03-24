@@ -1,6 +1,6 @@
 'use server';
 
-import { postSuggestion as dbPostSuggestion } from '@/lib/db';
+import { postSuggestion as dbPostSuggestion, voteSuggestion } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 
 export async function createSuggestion(formData: FormData) {
@@ -37,6 +37,28 @@ export async function createSuggestion(formData: FormData) {
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to create suggestion' 
+    };
+  }
+}
+
+// Add the toggleVote function
+export async function toggleVote(suggestionId: number) {
+  try {
+    // Use a dummy user ID for now (in a real app, this would come from auth)
+    const userId = 1;
+    
+    // Call the database function
+    const result = await voteSuggestion(suggestionId, userId);
+    
+    // Revalidate the suggestion detail page
+    revalidatePath(`/suggestions/${suggestionId}`);
+    
+    return result;
+  } catch (error) {
+    console.error('Error toggling vote:', error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : 'Failed to vote' 
     };
   }
 }

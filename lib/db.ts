@@ -10,11 +10,11 @@ import {
   timestamp,
   pgEnum,
   serial,
-  boolean
+  boolean,
+  unique
 } from 'drizzle-orm/pg-core';
-import { count, eq, ilike, desc, asc, and } from 'drizzle-orm';
+import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { datetime } from 'drizzle-orm/mysql-core';
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
@@ -45,6 +45,27 @@ export const users = pgTable('users', {
   id: serial('user_id').primaryKey(),
   username: text('username').notNull()
 });
+
+// Define the suggestion votes table with a function to avoid circular reference
+export const suggestionVotes = pgTable(
+  'suggestion_votes',
+  {
+    id: serial('vote_id').primaryKey(),
+    suggestion_id: integer('suggestion_id')
+      .notNull()
+      .references(() => suggestions.id),
+    user_id: integer('user_id')
+      .notNull()
+      .references(() => users.id),
+    created_at: timestamp('created_at').notNull()
+  },
+  (table) => {
+    return {
+      // Define the unique constraint inside a function to avoid circular reference
+      uniqueVote: unique('unique_suggestion_vote').on(table.suggestion_id, table.user_id)
+    };
+  }
+);
 
 export type Video = {
   id: string;
@@ -186,66 +207,141 @@ export async function deleteProductById(id: number) {
   await db.delete(products).where(eq(products.id, id));
 }
 
-// Updated function with tag filtering and sorting
-export async function getSuggestions(
-  tag_name?: string
-) {
-  // Create base query
-  let baseQuery = db.select({
-    id: suggestions.id,
-    text: suggestions.suggestion_text,
-    user_id: suggestions.user_id,
-    created_at: suggestions.created_at,
-    tag: suggestions.tag,
-    is_anonymous: suggestions.is_anonymous // Include is_anonymous field
-  }).from(suggestions);
+// Updated function with tag filtering and sorting AND vote counts
+export async function getSuggestions(tag_name?: string) {
+  // Create a subquery to count votes
+  const voteSubquery = db
+    .select({
+      suggestion_id: suggestionVotes.suggestion_id,
+      vote_count: count(suggestionVotes.id).as('vote_count')
+    })
+    .from(suggestionVotes)
+    .groupBy(suggestionVotes.suggestion_id)
+    .as('vote_counts');
 
-  // Add conditions for filtering
-  let conditions = [];
-  
-  // Filter by tag if specified
-  if (tag_name) {
-    conditions.push(eq(suggestions.tag, tag_name));
-  }
-  
-  // Apply conditions if any exist
-  const finalQuery = conditions.length > 0
-    ? baseQuery.where(and(...conditions))
-    : baseQuery;
-
-  return finalQuery.execute();
-}
-
-// Function to get all available tags (for filtering options)
-export async function getSuggestionTags() {
-  const results = await db
-    .selectDistinct({
-      tag: suggestions.tag
+  // Start with a base query
+  const baseSelect = db
+    .select({
+      id: suggestions.id,
+      text: suggestions.suggestion_text,
+      user_id: suggestions.user_id,
+      created_at: suggestions.created_at,
+      tag: suggestions.tag,
+      is_anonymous: suggestions.is_anonymous,
+      vote_count: voteSubquery.vote_count
     })
     .from(suggestions)
-    .orderBy(suggestions.tag);
+    .leftJoin(
+      voteSubquery,
+      eq(suggestions.id, voteSubquery.suggestion_id)
+    );
+    
+  // Apply tag filtering if needed
+  const filteredQuery = tag_name 
+    ? baseSelect.where(eq(suggestions.tag, tag_name))
+    : baseSelect;
   
-  return results.map(result => result.tag);
-}
-
-
-// 2. Create a function to get a user by ID
-export async function getUserById(id: number) {
-  const result = await db
-    .select({
-      id: users.id,
-      username: users.username
-    })
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1)
+  // Apply ordering and execute
+  const result = await filteredQuery
+    .orderBy(desc(sql`COALESCE(${voteSubquery.vote_count}, 0)`))
     .execute();
-  
-  return result[0] || null;
+    
+  // Get all unique tags in a separate query
+  const tags = await db
+    .selectDistinct({ tag: suggestions.tag })
+    .from(suggestions)
+    .orderBy(asc(suggestions.tag))
+    .execute();
+    
+  return {
+    suggestions: result,
+    tags: tags.map(t => t.tag)
+  };
 }
 
-// 3. Update getSuggestion to include user data via join
-export async function getSuggestionWithUser(id: number) {
+// Add function to check if user has voted
+export async function hasUserVotedSuggestion(suggestionId: number, userId: number): Promise<boolean> {
+  const result = await db
+    .select()
+    .from(suggestionVotes)
+    .where(
+      and(
+        eq(suggestionVotes.suggestion_id, suggestionId),
+        eq(suggestionVotes.user_id, userId)
+      )
+    )
+    .limit(1);
+    
+  return result.length > 0;
+}
+
+// Add a vote to a suggestion
+export async function voteSuggestion(
+  suggestionId: number,
+  userId: number
+): Promise<{ success: boolean; message: string }> {
+  try {
+    // Check if user has already voted
+    const hasVoted = await hasUserVotedSuggestion(suggestionId, userId);
+    if (hasVoted) {
+      // Remove the vote if they've already voted
+      await db
+        .delete(suggestionVotes)
+        .where(
+          and(
+            eq(suggestionVotes.suggestion_id, suggestionId),
+            eq(suggestionVotes.user_id, userId)
+          )
+        );
+      return { success: true, message: 'Vote removed' };
+    } else {
+      // Add a new vote
+      await db
+        .insert(suggestionVotes)
+        .values({
+          suggestion_id: suggestionId,
+          user_id: userId,
+          created_at: new Date()
+        });
+      return { success: true, message: 'Vote added' };
+    }
+  } catch (error) {
+    console.error('Error voting on suggestion:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+// Update getSuggestionWithUser to include vote info
+export async function getSuggestionWithUser(id: number, currentUserId: number = 1) {
+  // Create a subquery to get vote count
+  const voteCountSubquery = db
+    .select({
+      suggestion_id: suggestionVotes.suggestion_id,
+      vote_count: count(suggestionVotes.id).as('vote_count')
+    })
+    .from(suggestionVotes)
+    .where(eq(suggestionVotes.suggestion_id, id))
+    .groupBy(suggestionVotes.suggestion_id)
+    .as('vote_count_subquery');
+
+  // Check if current user has voted
+  const userVoteSubquery = db
+    .select({
+      has_voted: sql`TRUE`.as('has_voted')
+    })
+    .from(suggestionVotes)
+    .where(
+      and(
+        eq(suggestionVotes.suggestion_id, id),
+        eq(suggestionVotes.user_id, currentUserId)
+      )
+    )
+    .limit(1)
+    .as('user_vote_subquery');
+
   const result = await db
     .select({
       id: suggestions.id,
@@ -254,71 +350,58 @@ export async function getSuggestionWithUser(id: number) {
       username: users.username,
       created_at: suggestions.created_at,
       tag: suggestions.tag,
-      is_anonymous: suggestions.is_anonymous
+      is_anonymous: suggestions.is_anonymous,
+      vote_count: voteCountSubquery.vote_count,
+      user_has_voted: userVoteSubquery.has_voted
     })
     .from(suggestions)
     .leftJoin(users, eq(suggestions.user_id, users.id))
+    .leftJoin(voteCountSubquery, eq(suggestions.id, voteCountSubquery.suggestion_id))
+    .leftJoin(userVoteSubquery, sql`TRUE`)
     .where(eq(suggestions.id, id))
     .limit(1)
     .execute();
   
   if (!result[0]) return null;
   
-  if (result[0].is_anonymous) {
+  const suggestion = {
+    ...result[0],
+    vote_count: result[0].vote_count || 0,
+    user_has_voted: Boolean(result[0].user_has_voted)
+  };
+  
+  if (suggestion.is_anonymous) {
     return {
-      ...result[0],
+      ...suggestion,
       username: 'Anonymous'
     };
   }
   
-  return result[0];
+  return suggestion;
 }
 
+// Function to post a new suggestion
 export async function postSuggestion(
   suggestionText: string,
   userId: number,
   tag: string,
-  isAnonymous: boolean = false
-): Promise<{ id: number; text: string; tag: string; created_at: Date }> {
-  if (!suggestionText || suggestionText.trim() === '') {
-    throw new Error('Suggestion text is required');
-  }
-
-  if (!tag || tag.trim() === '') {
-    throw new Error('At least one tag is required');
-  }
-
-  let existingUser = await getUserById(userId);
-  
-  if (!existingUser) {
-    // Create a dummy user if user doesn't exist
+  isAnonymous: boolean
+) {
+  try {
     const result = await db
-      .insert(users)
+      .insert(suggestions)
       .values({
-        username: `User${userId}`
+        suggestion_text: suggestionText,
+        user_id: userId,
+        created_at: new Date(),
+        tag: tag,
+        is_anonymous: isAnonymous
       })
-      .returning({
-        id: users.id
-      });
+      .returning();
     
-    userId = result[0]?.id || userId;
+    return result[0];
+  } catch (error) {
+    console.error('Error posting suggestion:', error);
+    throw error;
   }
-
-  const result = await db
-    .insert(suggestions)
-    .values({
-      suggestion_text: suggestionText,
-      user_id: userId,
-      created_at: new Date(),
-      tag: tag,
-      is_anonymous: isAnonymous
-    })
-    .returning({
-      id: suggestions.id,
-      text: suggestions.suggestion_text,
-      tag: suggestions.tag,
-      created_at: suggestions.created_at
-    });
-
-  return result[0];
 }

@@ -1,16 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { PlusIcon, ThumbsUp } from 'lucide-react';
 import { SuggestionBox } from './suggestion-box';
 import { NewSuggestionButton } from './new-suggestion-button';
 
-type Suggestion = {
+export type Suggestion = {
   id: number;
   text: string;
   tag: string;
   is_anonymous: boolean;
   created_at: Date;
   user_id: number;
+  vote_count?: number;
 };
 
 export function SuggestionsClient({
@@ -46,28 +49,30 @@ export function SuggestionsClient({
         <h1 className="text-2xl text-center font-bold text-gray-800 dark:text-gray-200">
           Vi ønsker dine innspill
         </h1>
-        <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-2">
-          Skriv et forslag til oss
-        </p>
-        <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-2">
-          Du kan legge til én eller flere filer
-        </p>
       </div>
-
-      {/* Tag Filter Buttons */}
+      
+      {/* Simple Tag Filter Buttons */}
       <div className="flex flex-wrap gap-2 justify-center mb-6">
         <button
           onClick={() => handleTagClick(undefined)}
-          className={`px-4 py-2 rounded-lg font-medium ${!selectedTag ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
+          className={`px-4 py-2 rounded-full ${
+            !selectedTag
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+          }`}
         >
-          Alle
+          All
         </button>
-
+        
         {allTags.map((tag) => (
           <button
             key={tag}
             onClick={() => handleTagClick(tag)}
-            className={`px-4 py-2 rounded-lg font-medium ${selectedTag === tag ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
+            className={`px-4 py-2 rounded-full ${
+              selectedTag === tag
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+            }`}
           >
             {tag}
           </button>
@@ -76,10 +81,9 @@ export function SuggestionsClient({
 
       {/* Suggestions grid */}
       <div className="flex h-auto space-x-4 mt-6 px-4 flex-wrap">
-        {/* New Suggestion Button Component */}
+        {/* New Suggestion Button */}
         <NewSuggestionButton />
-
-        {/* Display filtered suggestions using SuggestionBox components */}
+        
         {displayedSuggestions.map((suggestion) => (
           <SuggestionBox key={suggestion.id} suggestion={suggestion} />
         ))}
