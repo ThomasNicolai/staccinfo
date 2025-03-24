@@ -2,13 +2,16 @@ import Link from 'next/link';
 import { PlusIcon } from 'lucide-react';
 import { getSuggestions, getSuggestionTags } from '@/lib/db';
 
+interface SuggestionPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 export default async function SuggestionsPage({
   searchParams
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}: SuggestionPageProps) {
   // Get the tag filter from URL query params
-  const tagParam = await searchParams.tag;
+  const params = await searchParams;
+  const tagParam = params.tag;
   const selectedTag = typeof tagParam === 'string' ? tagParam : undefined;
 
   // Get all available tags for filter buttons
