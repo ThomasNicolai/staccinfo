@@ -3,15 +3,17 @@ import { forwardRef, useState } from 'react';
 
 export interface WritingBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   onSend: (message: string) => void;
+  onSubmit?: () => void;
 }
 
 const WritingBox = forwardRef<HTMLDivElement, WritingBoxProps>(
-  ({ className, onSend, ...props }, ref) => {
+  ({ className, onSend, onSubmit, ...props }, ref) => {
     const [message, setMessage] = useState('');
 
-    const handleSendClick = () => {
-      onSend(message);
-      setMessage('');
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newMessage = e.target.value;
+      setMessage(newMessage);
+      onSend(newMessage);
     };
 
     return (
@@ -20,14 +22,9 @@ const WritingBox = forwardRef<HTMLDivElement, WritingBoxProps>(
           className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
           placeholder="Write your suggestion..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleChange}
+          rows={4}
         />
-        <button
-          className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded"
-          onClick={handleSendClick}
-        >
-          🚀
-        </button>
       </div>
     );
   }
