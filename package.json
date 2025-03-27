@@ -15,6 +15,7 @@
     "@types/node": "20.17.6",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "@types/vimeo__player": "^2.18.3",
     "@vercel/analytics": "^1.4.1",
     "@vimeo/player": "^2.26.0",
     "autoprefixer": "^10.4.20",

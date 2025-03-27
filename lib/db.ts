@@ -148,20 +148,50 @@ export async function getVideos(): Promise<{
     url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
 
   };
-  const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3];
+
+  const dummyVideo4: Video = {
+    id: '4',
+    slug: 'kom-i-gang-med-rapport',
+    length: 180,
+    title: 'Kom i gang med rapport',
+    url: 'https://www.youtube.com/watch?v=yDxSn-ZUVE0&ab_channel=MagnusMidtb%C3%B8'
+
+  };
+
+  const Video5: Video = {
+    id: '5',
+    slug: 'kom-i-gang-med-sparing',
+    length: 180,
+    title: 'Kom i gang med rapport (VIMEO)',
+    url: 'https://vimeo.com/358629078'
+
+  };
+
+  const dummyVideo6: Video = {
+    id: '6',
+    slug: 'kom-i-gang-med-penger',
+    length: 180,
+    title: 'Kom i gang med aksjer (VIMEO)',
+    url: 'https://vimeo.com/76979871'
+
+  };
+
+  const dummyVideo7: Video = {
+    id: '7',
+    slug: 'kom-i-gang-med-fond',
+    length: 180,
+    title: 'Kom i gang med fond (VIMEO)',
+    url: 'https://vimeo.com/572521128'
+
+  };
+  const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3, dummyVideo4, Video5, dummyVideo6, dummyVideo7];
   return { videos: dummyVideos };
 }
-export async function getVideo(slug: string): Promise<{
-  video: Video;
-}> {
-  const dummyVideo1: Video = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
-  };
-  return { video: dummyVideo1 };
+export async function getVideo(slug: string): Promise<{ video: Video | null }> {
+  const { videos } = await getVideos(); // Fetch all videos
+  const video = videos.find((v) => v.slug === slug); // Find the correct video
+  
+  return video ? { video } : { video: null }; // Return video or null if not found
 }
 export async function getArticles(): Promise<{
   articles: Article[];
