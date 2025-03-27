@@ -4,8 +4,9 @@ import Link from 'next/link';
 import VideoDetailContent from './videoDetailContent'; // our new client component
 import VideoCard from '../videoCard';
 
-export default async function VideoDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function VideoDetailPage({ params }: { params: any }) {
+  // Cast params to the expected plain object type
+  const { slug } = await params;
   const { video } = await getVideo(slug);
   const { videos } = await getVideos();
   const relatedVideos = videos.filter((v) => v.slug !== slug).slice(0, 3);

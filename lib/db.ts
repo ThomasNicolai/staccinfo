@@ -187,17 +187,11 @@ export async function getVideos(): Promise<{
   const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3, dummyVideo4, Video5, dummyVideo6, dummyVideo7];
   return { videos: dummyVideos };
 }
-export async function getVideo(slug: string): Promise<{
-  video: Video;
-}> {
-  const dummyVideo1: Video = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
-  };
-  return { video: dummyVideo1 };
+export async function getVideo(slug: string): Promise<{ video: Video | null }> {
+  const { videos } = await getVideos(); // Fetch all videos
+  const video = videos.find((v) => v.slug === slug); // Find the correct video
+  
+  return video ? { video } : { video: null }; // Return video or null if not found
 }
 export async function getArticles(): Promise<{
   articles: Article[];
