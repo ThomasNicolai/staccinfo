@@ -7,17 +7,26 @@ import {
 import type { Video } from '@/lib/db';
 
 // Function to extract YouTube video ID and get thumbnail
-function getYouTubeThumbnail(url: string): string {
-  // Extract video ID from YouTube URL
-  const regExp =
-    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-  const match = url.match(regExp);
-  const videoId = match && match[7].length == 11 ? match[7] : null;
-
-  // Return high-quality thumbnail URL if ID is found
-  return videoId
-    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+function getThumbnail(url: string): string {
+  if (url.includes('vimeo.com')) {
+    const match = url.match(/vimeo.com\/(\d+)/);
+    const videoId = match ? match[1] : null;
+    return videoId
+    ? `https://vumbnail.com/${videoId}.jpg`
     : 'https://placehold.co/600x400?text=Video+Thumbnail';
+  } else if (url.includes('youtube.com') || url.includes("youtu.be")) {
+    // Extract video ID from YouTube URL
+    const regExp =
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    const videoId = match && match[7].length == 11 ? match[7] : null;
+
+    // Return high-quality thumbnail URL if ID is found
+    return videoId
+      ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+      : 'https://placehold.co/600x400?text=Video+Thumbnail';
+  }
+  return 'https://placehold.co/600x400?text=Video+Thumbnail';
 }
 
 export default function VideoCard({ video }: { video: Video }) {
@@ -25,7 +34,7 @@ export default function VideoCard({ video }: { video: Video }) {
     <Card className="h-full">
       <div className="aspect-[4/3] relative overflow-hidden">
         <img
-          src={getYouTubeThumbnail(video.url)}
+          src={getThumbnail(video.url)}
           alt={`${video.title} thumbnail`}
           className="object-cover w-full h-full"
         />
