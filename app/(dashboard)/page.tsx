@@ -12,7 +12,7 @@ export default function HomePage() {
 
   const menuItems = [
     { label: "Moduler", icon: "Modules.png" },
-    { label: "Reports", icon: "Reports.png", description: "Detailed reports available here." },
+    { label: "Rappporter", icon: "Reports.png" },
     { label: "Ekstra funksjonalitet", icon: "Wand.png", description: "Additional features included." },
     { label: "Andre tjenester", icon: "Service.png", description: "Explore other services we offer." },
   ];
@@ -23,7 +23,7 @@ export default function HomePage() {
 
     <div className="flex flex-col relative items-center w-full min-h-screen overflow-y-auto overflow-hidden m-0 p-0">
 
-      {/* Circles*/}
+
      
       {/* Title*/}
       <div className="flex flex-col items-center pt-20">
@@ -80,17 +80,17 @@ export default function HomePage() {
 
         {/* Show extra divs when 'Moduler' is selected */}
         {activeIndex === 0 && (
-          <div className="flex justify-center w-full h-[220px] gap-3 ">
+          <div className="flex justify-center w-full h-[220px] gap-3  ">
             
             {/* Should show the three first, based on user*/}
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col ">
+            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col  ">
               <Link href="/suggestions">
               <span className="hover:text-[#324099] font-bold">Aksjer og fond</span>
               </Link>
               <p>Legge til funksjonalitet her</p>
             </div>
 
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col">
+            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col ">
               <Link href="/suggestions">
                 <span className="hover:text-[#324099] font-bold">Eksempel 2</span>
               </Link>
@@ -98,14 +98,44 @@ export default function HomePage() {
             </div>
 
 
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col">
+            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col ">
               <Link href="/suggestions">
               <span className="hover:text-[#324099] font-bold">Eksempel 3</span>
               </Link>
               <p>Legge til funksjonalitet her</p>
-            </div>          
+            </div> 
           </div>
         )}
+
+        {/* Show extra divs when 'Rapporter' is selected */}
+        {activeIndex === 1 && (
+          <div className="flex justify-center w-full h-[220px] gap-3  ">
+            
+            {/* Should show the three first, based on user*/}
+            <div className="bg-white border border p-4 rounded-[16px] w-[350px] h-full flex flex-col  ">
+              <Link href="/suggestions">
+              <span className="hover:text-[#324099] font-bold">Rapport 1</span>
+              </Link>
+              <p>Legge til funksjonalitet her</p>
+            </div>
+
+            <div className="bg-white border border p-4 rounded-[16px] w-[350px] h-full flex flex-col ">
+              <Link href="/suggestions">
+                <span className="hover:text-[#324099] font-bold">Rapport 2</span>
+              </Link>
+              <p>Legge til funksjonalitet her</p>
+            </div>
+
+
+            
+            
+
+
+
+          </div>
+        )}
+
+
         
       </div>
 
@@ -143,7 +173,7 @@ export default function HomePage() {
       </div>
 
         {/*FAQ and videos*/}
-      <div className="w-[700] h-[300] flex gap-3 pb-20">
+      <div className="w-[700px] h-[235px]  flex gap-3 pb-[20px] mb-[15px]">
         
         <div className="bg-white shadow-xl p-6 rounded-[16px] w-full h-full flex flex-col"> 
           <Link href="/videos">
@@ -163,11 +193,12 @@ export default function HomePage() {
       </div>
 
       {/* Snarveier */}
-      <div className="w-[700] h-[270] bg-white shadow-xl pb-[50px] rounded-[16px] flex justify-center items-center gap-16" >
+      <div className="w-[700px] h-[230px] bg-white shadow-xl rounded-[16px] flex justify-center items-center gap-16 mb-[70px]" >
         <Link href="/">
             <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden flex items-center justify-center">
               <img src="/Modules.png" alt="First Icon" className="w-10 invert brightness-100 object-cover" />
             </div>
+            
           </Link>
 
           {/* Second Circle with Image */}
@@ -192,7 +223,64 @@ export default function HomePage() {
         
       </div>
 
-      {/* Circles*/}
+      <div className="flex flex-col items-center pb-15 gap-2">
+        <h2 className="text-2xl font-bold">Supportcase</h2>
+        <p> Har du spørsmål eller trenger veiledning?</p>
+      </div>
+
+      {/* Support cases */}
+      <div className="flex justify-center items-center gap-4 p-10">
+        {/* First case with Image */}
+        <Link href="/">
+          <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
+            <img src="/Case.png" alt="First Icon" className="w-20 object-cover" />
+          
+            <p className="font-bold text-xl text-[#111625]">Case</p>
+            <p className="text-center">Lörem ipsum bilmålvakt intramis, de kronera, av plat</p>
+
+            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
+              <span className="align-middle">Les</span>
+              <img src="/arrow_short.png" alt="Arrow Icon" className="w-3 h-3 relative top-[1px] contrast-150" />
+            </div>
+
+          </div>
+        </Link>
+
+        {/* Second case with Image */}
+        <Link href="/">
+          <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
+            <img src="/Case.png" alt="First Icon" className="w-20 object-cover" />
+          
+            <p className="font-bold text-xl text-[#111625]">Case</p>
+            <p className="text-center">Lörem ipsum bilmålvakt intramis, de kronera, av plat</p>
+
+            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
+              <span className="align-middle">Les</span>
+              <img src="/arrow_short.png" alt="Arrow Icon" className="w-3 h-3 relative top-[1px] contrast-150" />
+            </div>
+
+          </div>
+        </Link>
+
+        <Link href="/">
+          <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
+            <img src="/Case.png" alt="First Icon" className="w-20 object-cover" />
+          
+            <p className="font-bold text-xl text-[#111625]">Case</p>
+            <p className="text-center">Lörem ipsum bilmålvakt intramis, de kronera, av plat</p>
+
+            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
+              <span className="align-middle">Les</span>
+              <img src="/arrow_short.png" alt="Arrow Icon" className="w-3 h-3 relative top-[1px] contrast-150" />
+            </div>
+
+          </div>
+        </Link>
+
+       
+
+      </div>
+
 
 
     </div>
