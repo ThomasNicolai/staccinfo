@@ -5,11 +5,11 @@ import { VoteButton } from '../VoteButton';
 export default async function SuggestionDetailPage({
   params
 }: {
-  params: Promise<{ slug: string }>; 
+  params: Promise<{ slug: string }>;
 }) {
   const slug = (await params).slug;
   const suggestionId = parseInt(slug, 10);
-  
+
   // Pass dummy user ID 1 for now (would come from auth in real app)
   const suggestionData = await getSuggestionWithUser(suggestionId, 1);
 
@@ -44,12 +44,12 @@ export default async function SuggestionDetailPage({
         </div>
 
         <p className="text-lg mb-4">{suggestionData.text}</p>
-        
+
         {/* Add vote button */}
         <div className="mt-4">
-          <VoteButton 
-            suggestionId={suggestionData.id} 
-            initialVoteCount={suggestionData.vote_count || 0} 
+          <VoteButton
+            suggestionId={suggestionData.id}
+            initialVoteCount={suggestionData.vote_count || 0}
             initialUserHasVoted={suggestionData.user_has_voted || false}
           />
         </div>
