@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import VideoPlayer from './videoPlayer';
+import VideoPlayer from './videoplayer';
 
 export default function VideoDetailContent({
   video,
