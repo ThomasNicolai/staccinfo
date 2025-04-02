@@ -434,4 +434,70 @@ export async function postSuggestion(
     console.error('Error posting suggestion:', error);
     throw error;
   }
+}import sql from "mssql";
+
+// Database Configuration
+const config = {
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  server: "stacc.database.windows.net",
+  database: "EscaliLicencesDev",
+  options: {
+    encrypt: true,
+    trustServerCertificate: false,
+  },
+};
+
+// ✅ Connect to DB
+export async function getDBConnection() {
+  try {
+    return await sql.connect(config);
+  } catch (error) {
+    console.error("❌ DB connection failed:", error);
+    throw new Error("Database connection error");
+  }
 }
+
+// ✅ Strip HTML tags from content
+function cleanHtml(html: string) {
+  return html
+    .replace(/<\/?[^>]+(>|$)/g, "")
+    .replace(/\n\s*\n/g, "\n")
+    .trim();
+}
+
+// ✅ Get Articles Based on Agreements
+export async function getArticlesByCustomerSeq(customerSeq: number) {
+  try {
+    const pool = await getDBConnection();
+
+    const result = await pool.request().input("customerSeq", customerSeq).query(`
+      SELECT DISTINCT m.ModuleSeq ,c.CustomerSeq,d.Description
+      FROM Modules m
+      RIGHT JOIN Agreements a ON a.ProductSeq = m.ProductSeq
+      RIGHT JOIN Customers c ON c.CustomerSeq = a.CustomerSeq
+      Right JOIN ModuleDescriptions md ON m.ModuleSeq = md.ModuleSeq
+      Right join .Descriptions d on md.DescriptionSeq = d.DescriptionSeq
+      WHERE 
+      c.IsActive = 1
+      AND a.IsActive = 1
+      AND m.IsActive = 1
+      ORDER BY m.ModuleSeq, c.CustomerSeq DESC;
+    `);
+
+    const articles = result.recordset.map((article: any) => ({
+      id: article.DescriptionSeq,
+      title: article.Description,
+      content: cleanHtml(article.HTML),
+      language: article.LanguageSeq,
+      type: article.TypeSeq,
+    }));
+
+    return { articles };
+  } catch (error: any) {
+    console.error("❌ Error fetching articles:", error.message);
+    return { error: "Failed to fetch articles", details: error.message };
+  }
+}
+
+

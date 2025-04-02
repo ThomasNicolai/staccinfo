@@ -20,3 +20,29 @@ export default async function Page({
     </div>
   );
 }
+import { getArticlesByCustomerSeq } from "@/lib/db";
+
+export default async function ArticleDetailPage({ params }: { params: { slug: string } }) {
+  const customerSeq = 10217; // Change this as needed
+  const response = await getArticlesByCustomerSeq(customerSeq);
+
+  if (response.error) {
+    return <p className="text-red-500">❌ {response.error}</p>;
+  }
+
+  const article = response.articles.find((a: any) => a.id === Number(params.slug));
+
+  if (!article) {
+    return <p className="text-red-500">❌ Article Not Found</p>;
+  }
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">{article.title}</h1>
+      <div className="mt-4 p-4 border rounded-md bg-gray-50">
+        <p>{article.content}</p>
+      </div>
+    </div>
+  );
+}
+
