@@ -37,7 +37,7 @@ export const videos = pgTable('videos', {
   title: text('title').notNull(),
   url: text('url').notNull(),
   length: numeric('video_length').notNull(),
-  tag: text('tag_selection').notNull(),
+  tag: text('tags').notNull(),
 });
 
 export const users = pgTable('users', {
