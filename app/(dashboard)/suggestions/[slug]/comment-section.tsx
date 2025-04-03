@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Comment } from '@/lib/db';
+import { addCommentAction, getCommentsAction } from './add-comment';
 
 // Single comment component with collapsible replies
 function CommentItem({
@@ -113,32 +114,19 @@ export function CommentSection({
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Add a new top-level comment
+  // Add a new top-level comment using server action
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          suggestionId,
-          content: newComment,
-          parentId: null
-        })
-      });
+      const result = await addCommentAction(suggestionId, newComment);
 
-      if (!response.ok) throw new Error('Failed to add comment');
-
-      // Refresh all comments
-      const refreshResponse = await fetch(
-        `/api/comments?suggestionId=${suggestionId}`
-      );
-      const data = await refreshResponse.json();
-      setComments(data.comments);
-      setNewComment('');
+      if (result.success && result.comments) {
+        setComments(result.comments);
+        setNewComment('');
+      }
     } catch (error) {
       console.error('Error adding comment:', error);
     } finally {
@@ -152,24 +140,11 @@ export function CommentSection({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          suggestionId,
-          content,
-          parentId
-        })
-      });
+      const result = await addCommentAction(suggestionId, content, parentId);
 
-      if (!response.ok) throw new Error('Failed to add reply');
-
-      // Refresh all comments
-      const refreshResponse = await fetch(
-        `/api/comments?suggestionId=${suggestionId}`
-      );
-      const data = await refreshResponse.json();
-      setComments(data.comments);
+      if (result.success && result.comments) {
+        setComments(result.comments);
+      }
     } catch (error) {
       console.error('Error adding reply:', error);
     } finally {
@@ -181,29 +156,8 @@ export function CommentSection({
     <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
       <h2 className="text-xl font-bold mb-4">Kommentarer</h2>
 
-      {/* Add new comment form */}
-      <form onSubmit={handleAddComment} className="mb-6">
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Add a comment..."
-          rows={3}
-          disabled={isSubmitting}
-        />
-        <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={!newComment.trim() || isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-          >
-            {isSubmitting ? 'Posting...' : 'Post Comment'}
-          </button>
-        </div>
-      </form>
-
-      {/* Comments list */}
-      <div className="space-y-4">
+      {/* Comments list - at the top */}
+      <div className="space-y-4 mb-6">
         {comments.length === 0 ? (
           <p className="text-gray-500">
             No comments yet. Be the first to comment!
@@ -218,6 +172,31 @@ export function CommentSection({
           ))
         )}
       </div>
+
+      {/* Separator line */}
+      <div className="border-t border-gray-200 my-6"></div>
+
+      {/* Add new comment form - at the bottom */}
+      <form onSubmit={handleAddComment}>
+        <h3 className="text-lg font-medium mb-2">Add your comment</h3>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Write your comment here..."
+          rows={3}
+          disabled={isSubmitting}
+        />
+        <div className="mt-2 flex justify-end">
+          <button
+            type="submit"
+            disabled={!newComment.trim() || isSubmitting}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+          >
+            {isSubmitting ? 'Posting...' : 'Post Comment'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
