@@ -67,6 +67,21 @@ export const suggestionVotes = pgTable(
   }
 );
 
+
+export const suggestion_comments = pgTable('comments_on_suggestions', {
+  id: serial('comment_id').primaryKey(),
+  suggestion_id: integer('suggestion_id')
+    .notNull()
+    .references(() => suggestions.id),
+  user_id: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  parent_id: integer('parent_id').references((): any => suggestion_comments.id), // For nested comments
+  content: text('comment').notNull(),
+  created_at: timestamp('created_at').notNull().defaultNow()
+});
+
+
 export type Video = {
   id: string;
   slug: string;
@@ -80,6 +95,17 @@ export type Article = {
   title: string;
   content: string;
 };
+
+export type Comment = {
+  id: number;
+  suggestion_id: number;
+  user_id: number;
+  parent_id: number | null;
+  content: string;
+  created_at: Date;
+  username: string;
+  replies?: Comment[]; 
+}
 
 export type SelectProduct = typeof products.$inferSelect;
 export const insertProductSchema = createInsertSchema(products);
@@ -434,4 +460,71 @@ export async function postSuggestion(
     console.error('Error posting suggestion:', error);
     throw error;
   }
+}
+
+export async function getCommentsForSuggestion(
+  suggestion_id: number
+): Promise<Comment[]> {
+  const allComments = await db
+    .select({
+      id: suggestion_comments.id,
+      suggestion_id: suggestion_comments.suggestion_id,
+      content: suggestion_comments.content,
+      created_at: suggestion_comments.created_at,
+      user_id: suggestion_comments.user_id,
+      parent_id: suggestion_comments.parent_id,
+      username: users.username
+    })
+    .from(suggestion_comments)
+    .innerJoin(users, eq(suggestion_comments.user_id, users.id))
+    .where(eq(suggestion_comments.suggestion_id, suggestion_id))
+    .orderBy(desc(suggestion_comments.created_at)) 
+    .execute();
+
+    const commentMap: Record<number, Comment> = {};
+    
+    allComments.forEach(comment => {
+      commentMap[comment.id] = {
+        ...comment,
+        replies: [] // Initialize empty replies array
+      };
+    });
+    
+    // Root comments (no parent)
+    const rootComments: Comment[] = [];
+    
+    // Organize comments into parent-child relationships
+    allComments.forEach(comment => {
+      if (comment.parent_id === null) {
+        // This is a root level comment
+        rootComments.push(commentMap[comment.id]);
+      } else {
+        // This is a reply - add it to its parent's replies
+        if (commentMap[comment.parent_id]) {
+          commentMap[comment.parent_id].replies!.push(commentMap[comment.id]);
+        }
+      }
+    });
+    
+    return rootComments;
+  }
+
+
+// Add to lib/db.ts if not already there
+export async function addComment(
+  suggestion_id: number,
+  user_id: number,
+  content: string,
+  parent_id?: number | null
+) {
+  return db
+    .insert(suggestion_comments)
+    .values({
+      suggestion_id,
+      user_id,
+      content,
+      parent_id: parent_id || null
+    })
+    .returning()
+    .execute();
 }

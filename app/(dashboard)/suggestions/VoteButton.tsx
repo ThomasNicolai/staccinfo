@@ -1,4 +1,3 @@
-// Create app/(dashboard)/suggestions/VoteButton.tsx
 'use client';
 
 import { ThumbsUp } from 'lucide-react';
@@ -22,16 +21,16 @@ export function VoteButton({
     setIsLoading(true);
     try {
       const result = await toggleVote(suggestionId);
-      
+
       if (result.success) {
         // If vote was added, increment count
         if (result.message === 'Vote added') {
-          setVoteCount(prev => prev + 1);
+          setVoteCount((prev) => prev + 1);
           setUserHasVoted(true);
-        } 
+        }
         // If vote was removed, decrement count
         else if (result.message === 'Vote removed') {
-          setVoteCount(prev => prev - 1);
+          setVoteCount((prev) => prev - 1);
           setUserHasVoted(false);
         }
       }
@@ -48,7 +47,7 @@ export function VoteButton({
       disabled={isLoading}
       className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
         userHasVoted
-          ? 'bg-blue-100 text-blue-800' 
+          ? 'bg-blue-100 text-blue-800'
           : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
       }`}
     >
