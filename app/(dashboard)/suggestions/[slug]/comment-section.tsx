@@ -1,10 +1,91 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Comment } from '@/lib/db';
-import { addCommentAction, getCommentsAction } from './add-comment';
+import { Comment, addComment } from '@/lib/db';
+// import { addCommentAction, getCommentsAction } from './add-comment';
 
 // Single comment component with collapsible replies
+
+export function CommentSection({
+  suggestionId,
+  initialComments,
+  newCommentHandler
+}: {
+  suggestionId: number;
+  initialComments: Comment[];
+  newCommentHandler: (
+    suggestionId: number,
+    content: string,
+    parentId: number | null
+  ) => void;
+}) {
+  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [newComment, setNewComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    newCommentHandler(suggestionId, newComment, null);
+  };
+
+  // Add a reply to an existing comment
+  const handleAddReply = async (parentId: number, content: string) => {
+    if (!content.trim()) return;
+    setIsSubmitting(true);
+    newCommentHandler(suggestionId, content, parentId);
+    setIsSubmitting(false);
+  };
+
+  return (
+    <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+      <h2 className="text-xl font-bold mb-4">Kommentarer</h2>
+
+      {/* Comments list - at the top */}
+      <div className="space-y-4 mb-6">
+        {comments.length === 0 ? (
+          <p className="text-gray-500">
+            No comments yet. Be the first to comment!
+          </p>
+        ) : (
+          comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              onAddReply={handleAddReply}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Separator line */}
+      <div className="border-t border-gray-200 my-6"></div>
+
+      {/* Add new comment form - at the bottom */}
+      <form onSubmit={handleAddComment}>
+        <h3 className="text-lg font-medium mb-2">Add your comment</h3>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Write your comment here..."
+          rows={3}
+          disabled={isSubmitting}
+        />
+        <div className="mt-2 flex justify-end">
+          <button
+            type="submit"
+            disabled={!newComment.trim() || isSubmitting}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+          >
+            {isSubmitting ? 'Posting...' : 'Post Comment'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 function CommentItem({
   comment,
   onAddReply
@@ -12,7 +93,6 @@ function CommentItem({
   comment: Comment;
   onAddReply: (parentId: number, content: string) => void;
 }) {
-  const userId = 1; // Replace with actual user ID from context or props
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [replyContent, setReplyContent] = useState('');
@@ -100,104 +180,6 @@ function CommentItem({
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-export function CommentSection({
-  suggestionId,
-  initialComments = []
-}: {
-  suggestionId: number;
-  initialComments: Comment[];
-}) {
-  const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [newComment, setNewComment] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Add a new top-level comment using server action
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      const result = await addCommentAction(suggestionId, newComment, userId);
-
-      if (result.success && result.comments) {
-        setComments(result.comments);
-        setNewComment('');
-      }
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Add a reply to an existing comment
-  const handleAddReply = async (parentId: number, content: string) => {
-    if (!content.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      const result = await addCommentAction(suggestionId, content, parentId);
-
-      if (result.success && result.comments) {
-        setComments(result.comments);
-      }
-    } catch (error) {
-      console.error('Error adding reply:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-      <h2 className="text-xl font-bold mb-4">Kommentarer</h2>
-
-      {/* Comments list - at the top */}
-      <div className="space-y-4 mb-6">
-        {comments.length === 0 ? (
-          <p className="text-gray-500">
-            No comments yet. Be the first to comment!
-          </p>
-        ) : (
-          comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              onAddReply={handleAddReply}
-            />
-          ))
-        )}
-      </div>
-
-      {/* Separator line */}
-      <div className="border-t border-gray-200 my-6"></div>
-
-      {/* Add new comment form - at the bottom */}
-      <form onSubmit={handleAddComment}>
-        <h3 className="text-lg font-medium mb-2">Add your comment</h3>
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Write your comment here..."
-          rows={3}
-          disabled={isSubmitting}
-        />
-        <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={!newComment.trim() || isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-          >
-            {isSubmitting ? 'Posting...' : 'Post Comment'}
-          </button>
-        </div>
-      </form>
     </div>
   );
 }

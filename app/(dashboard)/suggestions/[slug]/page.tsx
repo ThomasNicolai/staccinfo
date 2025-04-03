@@ -1,8 +1,14 @@
-import { getCommentsForSuggestion, getSuggestionWithUser } from '@/lib/db';
+'use server';
+import {
+  getCommentsForSuggestion,
+  getSuggestionWithUser,
+  addComment
+} from '@/lib/db';
 import Link from 'next/link';
 import { VoteButton } from '../VoteButton';
 import { CommentSection } from './comment-section';
-import { comment } from 'postcss';
+// import { addCommentAction } from './add-comment';
+import { revalidatePath } from 'next/cache';
 
 export default async function SuggestionDetailPage({
   params
@@ -10,19 +16,25 @@ export default async function SuggestionDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const slug = (await params).slug;
+  const userId = 1;
   const suggestionId = parseInt(slug, 10);
-
-  // Pass dummy user ID 1 for now (would come from auth in real app)
   const suggestionData = await getSuggestionWithUser(suggestionId, 1);
-
   const comments = await getCommentsForSuggestion(suggestionId);
+
+  function handleNewComment(
+    suggestionId: number,
+    content: string,
+    parentId: number | null
+  ): void {
+    addComment(suggestionId, userId, content, parentId);
+    revalidatePath(`/suggestions/${suggestionId}`);
+  }
 
   if (!suggestionData) {
     return (
       <div className="p-8">Suggestion with ID {suggestionId} not found.</div>
     );
   }
-
   return (
     <div className="p-8">
       {/* Back button */}
@@ -65,7 +77,11 @@ export default async function SuggestionDetailPage({
           </p>
         </div>
       </div>
-      <CommentSection suggestionId={suggestionId} initialComments={comments} />
+      <CommentSection
+        newCommentHandler={handleNewComment}
+        suggestionId={suggestionId}
+        initialComments={comments}
+      />
     </div>
   );
 }
