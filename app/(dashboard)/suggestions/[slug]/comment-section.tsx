@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Comment, addComment } from '@/lib/db';
-// import { addCommentAction, getCommentsAction } from './add-comment';
+import { Comment } from '@/lib/db';
 
 // Single comment component with collapsible replies
 
@@ -26,7 +25,8 @@ export function CommentSection({
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-    newCommentHandler(suggestionId, newComment, null);
+
+    setIsSubmitting(true);
   };
 
   // Add a reply to an existing comment

@@ -7,8 +7,8 @@ import {
 import Link from 'next/link';
 import { VoteButton } from '../VoteButton';
 import { CommentSection } from './comment-section';
-// import { addCommentAction } from './add-comment';
 import { revalidatePath } from 'next/cache';
+import { handleNewComment } from './comment-action';
 
 export default async function SuggestionDetailPage({
   params
@@ -20,15 +20,6 @@ export default async function SuggestionDetailPage({
   const suggestionId = parseInt(slug, 10);
   const suggestionData = await getSuggestionWithUser(suggestionId, 1);
   const comments = await getCommentsForSuggestion(suggestionId);
-
-  function handleNewComment(
-    suggestionId: number,
-    content: string,
-    parentId: number | null
-  ): void {
-    addComment(suggestionId, userId, content, parentId);
-    revalidatePath(`/suggestions/${suggestionId}`);
-  }
 
   if (!suggestionData) {
     return (
