@@ -1,0 +1,17 @@
+newUser
+[
+    {
+      "UserSeq": 1,
+      "CustomerSeq": 10217,
+      "UserConsultantEmail": "testuser@example.com",
+      "UserConsultantName": "Test User",
+      "Modules": [1, 3, 9, 12, 15, 58]
+    },
+    {
+      "UserSeq": 2,
+      "CustomerSeq": 10052,
+      "UserConsultantEmail": "newcustomer@example.com",
+      "UserConsultantName": "New Customer",
+      "Modules": [2, 4, 7, 10, 14, 16]
+    }
+]

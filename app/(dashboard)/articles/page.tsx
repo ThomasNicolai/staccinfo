@@ -2,7 +2,7 @@ import { getArticles } from '@/lib/db';
 import Link from 'next/link';
 import ArticleCard from './articleCard';
 
-export default async function ArticlesPage() {
+/*export default async function ArticlesPage() {
   const { articles } = await getArticles();
   return (
     <div className="page">
@@ -16,10 +16,10 @@ export default async function ArticlesPage() {
       })}
     </div>
   );
-}
+}*/
 import React from "react";
 import { getArticlesByCustomerSeq } from "@/lib/db";
-import Link from "next/link";
+
 
 export default async function ArticlesPage() {
   const customerSeq = 10217; // Change this as needed
