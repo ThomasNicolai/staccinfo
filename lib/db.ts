@@ -173,7 +173,6 @@ export async function getArticle(slug: string): Promise<{
   return { article: dummyArticle1 };
 }
 
-
 // Updated function with tag filtering and sorting AND vote counts
 export async function getSuggestions(tag_name?: string) {
   // Create a subquery to count votes
