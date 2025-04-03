@@ -105,7 +105,6 @@ export async function getVideos(): Promise<{ videos: Video[] }> {
   return { videos: typedVideos };
 }
 
-    
 export async function getVideo(id: number): Promise<{ video: Video | null }> {
   const result = await db
     .select({

@@ -1,65 +1,42 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import type { Video } from '@/lib/db';
+import Link from 'next/link';
 
-// Function to extract YouTube video ID and get thumbnail
-function getThumbnail(url: string): string {
-  if (url.includes('vimeo.com')) {
-    const match = url.match(/vimeo.com\/(\d+)/);
-    const videoId = match ? match[1] : null;
-    return videoId
-    ? `https://vumbnail.com/${videoId}.jpg`
-    : 'https://placehold.co/600x400?text=Video+Thumbnail';
-  } else if (url.includes('youtube.com') || url.includes("youtu.be")) {
-    // Extract video ID from YouTube URL
-    const regExp =
-      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    const videoId = match && match[7].length == 11 ? match[7] : null;
+type VideoCardProps = {
+  video: {
+    id: number;
+    title: string;
+    url: string;
+    length: number;
+    tag: string;
+  };
+};
 
-    // Return high-quality thumbnail URL if ID is found
-    return videoId
-      ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-      : 'https://placehold.co/600x400?text=Video+Thumbnail';
-  }
-  return 'https://placehold.co/600x400?text=Video+Thumbnail';
-}
+export default function VideoCard({ video }: VideoCardProps) {
+  // Format the video length (assuming it's in seconds)
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
-export default function VideoCard({ video }: { video: Video }) {
   return (
-    <Card className="h-full">
-      <div className="aspect-[4/3] relative overflow-hidden">
-        <img
-          src={getThumbnail(video.url)}
-          alt={`${video.title} thumbnail`}
-          className="object-cover w-full h-full"
-        />
-        {/* Optional play button overlay */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-black bg-opacity-30 rounded-full p-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="white"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
+    <Link href={`/videos/${video.id}`}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
+        {/* Video thumbnail (could be a placeholder or generated from the video URL) */}
+        <div className="aspect-video bg-gray-200 dark:bg-gray-700 relative">
+          <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded">
+            {formatDuration(video.length)}
+          </div>
+        </div>
+
+        <div className="p-4">
+          <h2 className="text-lg font-medium line-clamp-2">{video.title}</h2>
+          <div className="mt-2 flex justify-between items-center">
+            <span className="inline-block bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 text-xs px-2 py-1 rounded">
+              {video.tag}
+            </span>
           </div>
         </div>
       </div>
-      <CardHeader className="p-4">
-        <CardTitle className="text-lg">{video.title}</CardTitle>
-        <CardDescription>
-          {Math.floor(video.length / 60)}:
-          {String(video.length % 60).padStart(2, '0')} min
-        </CardDescription>
-      </CardHeader>
-    </Card>
+    </Link>
   );
 }
