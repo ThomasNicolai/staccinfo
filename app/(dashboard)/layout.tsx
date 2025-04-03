@@ -7,7 +7,7 @@ import {
   ShoppingCart,
   BookOpenText,
   Clapperboard,
-  Package,
+  Grid2X2,
   MessageSquareText
 } from 'lucide-react';
 
@@ -73,7 +73,7 @@ function DesktopNav() {
         </NavItem>
 
         <NavItem href="/products" label="Products">
-          <Package className="h-5 w-5" />
+          <Grid2X2 className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/videos" label="Videos">
