@@ -12,6 +12,7 @@ function CommentItem({
   comment: Comment;
   onAddReply: (parentId: number, content: string) => void;
 }) {
+  const userId = 1; // Replace with actual user ID from context or props
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [replyContent, setReplyContent] = useState('');
@@ -121,7 +122,7 @@ export function CommentSection({
 
     setIsSubmitting(true);
     try {
-      const result = await addCommentAction(suggestionId, newComment);
+      const result = await addCommentAction(suggestionId, newComment, userId);
 
       if (result.success && result.comments) {
         setComments(result.comments);
