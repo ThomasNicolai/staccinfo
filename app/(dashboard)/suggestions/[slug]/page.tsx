@@ -1,6 +1,8 @@
-import { getSuggestionWithUser } from '@/lib/db';
+import { getCommentsForSuggestion, getSuggestionWithUser } from '@/lib/db';
 import Link from 'next/link';
 import { VoteButton } from '../VoteButton';
+import { CommentSection } from './comment-section';
+import { comment } from 'postcss';
 
 export default async function SuggestionDetailPage({
   params
@@ -12,6 +14,8 @@ export default async function SuggestionDetailPage({
 
   // Pass dummy user ID 1 for now (would come from auth in real app)
   const suggestionData = await getSuggestionWithUser(suggestionId, 1);
+
+  const comments = await getCommentsForSuggestion(suggestionId);
 
   if (!suggestionData) {
     return (
@@ -61,6 +65,7 @@ export default async function SuggestionDetailPage({
           </p>
         </div>
       </div>
+      <CommentSection suggestionId={suggestionId} initialComments={comments} />
     </div>
   );
 }
