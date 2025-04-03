@@ -8,11 +8,11 @@ import { Comment } from '@/lib/db';
 export function CommentSection({
   suggestionId,
   initialComments,
-  newCommentHandler
+  newCommentHandlerAction
 }: {
   suggestionId: number;
   initialComments: Comment[];
-  newCommentHandler: (
+  newCommentHandlerAction: (
     suggestionId: number,
     content: string,
     parentId: number | null
@@ -33,7 +33,7 @@ export function CommentSection({
   const handleAddReply = async (parentId: number, content: string) => {
     if (!content.trim()) return;
     setIsSubmitting(true);
-    newCommentHandler(suggestionId, content, parentId);
+    newCommentHandlerAction(suggestionId, content, parentId);
     setIsSubmitting(false);
   };
 

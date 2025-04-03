@@ -69,7 +69,7 @@ export default async function SuggestionDetailPage({
         </div>
       </div>
       <CommentSection
-        newCommentHandler={handleNewComment}
+        newCommentHandlerAction={handleNewComment}
         suggestionId={suggestionId}
         initialComments={comments}
       />
