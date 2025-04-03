@@ -88,16 +88,24 @@ export async function getVideos(): Promise<{ videos: Video[] }> {
       title: videos.title,
       url: videos.url,
       length: videos.length,
-      tag: videos.tag, // Use videos.tag instead of suggestions.tag
+      tag: videos.tag,
     })
     .from(videos)
     .execute();
   
-  return { videos: result };
+  // Convert the database result to match your Video type exactly
+  const typedVideos: Video[] = result.map(video => ({
+    id: Number(video.id),
+    title: video.title,
+    url: video.url,
+    length: Number(video.length), // Convert numeric to number
+    tag: video.tag
+  }));
+  
+  return { videos: typedVideos };
 }
 
     
-
 export async function getVideo(id: number): Promise<{ video: Video | null }> {
   const result = await db
     .select({
@@ -112,7 +120,18 @@ export async function getVideo(id: number): Promise<{ video: Video | null }> {
     .limit(1)
     .execute();
   
-  return { video: result[0] || null };
+  if (!result[0]) return { video: null };
+  
+  // Convert the database result to match your Video type
+  const typedVideo: Video = {
+    id: Number(result[0].id),
+    title: result[0].title,
+    url: result[0].url,
+    length: Number(result[0].length), // Convert numeric to number
+    tag: result[0].tag
+  };
+  
+  return { video: typedVideo };
 }
 
 export async function getArticles(): Promise<{
