@@ -25,10 +25,6 @@ export default function VimeoPlayer({
         if (duration > 0) {
           const progressPercentage = (seconds / duration) * 100;
           onProgressChange && onProgressChange(progressPercentage);
-          localStorage.setItem(
-            `progress-${video.id}`,
-            progressPercentage.toString()
-          );
         }
       });
     }

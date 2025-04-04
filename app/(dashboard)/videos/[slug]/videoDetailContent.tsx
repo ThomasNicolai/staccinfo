@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import VideoPlayer from './videoPlayer';
 import { Video } from '@/lib/db';
 import Link from 'next/link';
@@ -13,6 +13,19 @@ export default function VideoDetailContent({
   relatedVideos: Video[];
 }) {
   const [progress, setProgress] = useState(0);
+  const userId = 123; // dummy for nå
+
+  useEffect(()=> {
+    const saved = localStorage.getItem('progress -${userId}-${video.id}'); //bytt ut localStorage til getVideoProgress for database funskjon
+    if (saved) {
+      setProgress(parseFloat(saved));
+    }
+  }, [video.id]);
+
+  const handleProgressChange = (value: number) => {
+    setProgress(value);
+    localStorage.setItem('progress-${userId}-${video.id}', value.toString() ); //bytt ut localStorage til getVideoProgress for database funksjon
+  };
 
   const chapters = [
     { time: 0, title: 'Introduction' },
@@ -32,7 +45,7 @@ export default function VideoDetailContent({
         {/* LEFT COLUMN */}
         <div className="flex-[1.2] space-y-10">
           <div className="video-player-wrapper bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg">
-            <VideoPlayer video={video} onProgressChange={setProgress} />
+            <VideoPlayer video={video} onProgressChange={handleProgressChange} />
 
             {/* Video metadata */}
             <div className="mt-4 flex items-center justify-between">
