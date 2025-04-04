@@ -9,7 +9,6 @@ export default async function VideoDetailPage({ params }: { params: any }) {
   const { slug } = await params;
   const { video } = await getVideo(slug);
   const { videos } = await getVideos();
-  const relatedVideos = videos.filter((v) => v.slug !== slug).slice(0, 3);
 
   if (!video) {
     return <div>Video not found.</div>;
@@ -32,7 +31,7 @@ export default async function VideoDetailPage({ params }: { params: any }) {
 
   {/* Full-width content goes here */}
   <div className="w-full">
-    <VideoDetailContent video={video} relatedVideos={relatedVideos} />
+    {/* <VideoDetailContent video={video} relatedVideos={relatedVideos} /> */}
   </div>
 </div>
   );

@@ -1,87 +1,101 @@
 'use client';
+
+import React, { useState } from 'react';
+import { Video } from '@/lib/db';
 import VideoCard from './videoCard';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import type { Video } from '@/lib/db';
 
-interface VideoClientProps {
-  initialVideos: Video[];
+// Helper function to safely get tags from a video
+function getTagsArray(video: Video): string[] {
+  // Check if tag exists and is a string
+  if (!video.tag || typeof video.tag !== 'string') {
+    return [];
+  }
+
+  return video.tag
+    .split(',')
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
 }
 
-export default function VideoClient({ initialVideos }: VideoClientProps) {
-  const [selectedFilter, setSelectedFilter] = useState('Alle videoer');
-  const videos = initialVideos;
-  const router = useRouter();
+export default function VideoClient({
+  initialVideos
+}: {
+  initialVideos: Video[];
+}) {
+  const [videos] = useState<Video[]>(initialVideos);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const filters = [
-    'Alle videoer',
-    'Oppsett',
-    'Grunndata',
-    'Transaksjonsregistrering',
-    'Rapportering'
-  ];
-
-  const filteredVideos = useMemo(() => {
-    if (selectedFilter === 'Alle videoer') return videos;
-
-    return videos.filter((video) => {
-      const title = video.title.toLowerCase();
-      switch (selectedFilter) {
-        case 'Oppsett':
-          return title.includes('kom i gang');
-        case 'Grunndata':
-          return title.includes('grunndata');
-        case 'Transaksjonsregistrering':
-          return title.includes('transaksjon');
-        case 'Rapportering':
-          return title.includes('rapport');
-        default:
-          return false;
+  // Extract all unique tags from comma-separated tag strings
+  const allTags: string[] = [];
+  videos.forEach((video) => {
+    // Use our safe helper function
+    const videoTags = getTagsArray(video);
+    videoTags.forEach((tag) => {
+      if (!allTags.includes(tag)) {
+        allTags.push(tag);
       }
     });
-  }, [selectedFilter, videos]);
+  });
+
+  // Sort tags alphabetically
+  const uniqueTags = allTags.sort();
+
+  // Filter videos based on selected tag
+  const filteredVideos = selectedTag
+    ? videos.filter((video) => {
+        // Use our safe helper function
+        const videoTags = getTagsArray(video);
+        return videoTags.includes(selectedTag);
+      })
+    : videos;
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Videobibliotek</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Videos</h1>
+      </div>
 
-        {/* {isLoading && (
-          <div className="text-center py-4">Loading videos...</div>
-        )} */}
+      {/* Tags filter */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => setSelectedTag(null)}
+          className={`px-3 py-1 rounded text-sm ${
+            selectedTag === null
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          All
+        </button>
+        {uniqueTags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => setSelectedTag(tag)}
+            className={`px-3 py-1 rounded text-sm ${
+              selectedTag === tag
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 hover:bg-gray-300'
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
 
-        {/* Filter Bar */}
-        <div className="flex flex-wrap gap-3 justify-center mb-8">
-          {filters.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setSelectedFilter(filter)}
-              className={`px-4 py-2 rounded-full text-sm transition-colors
-                ${
-                  selectedFilter === filter
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700'
-                }`}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
-
-        {/* Video Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVideos.map((video) => (
-            <Link
-              href={`/videos/${video.slug}`}
-              key={video.id}
-              onClick={() => router.push(`/videos/${video.slug}`)}
-              className="block transform hover:scale-105 transition-transform"
-            >
+      {/* Videos grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredVideos.length > 0 ? (
+          filteredVideos.map((video) => (
+            <Link href={`/videos/${video.id}`} key={video.id}>
               <VideoCard video={video} />
             </Link>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p className="col-span-full text-center py-8 text-gray-500">
+            No videos {selectedTag ? `with tag "${selectedTag}"` : ''} found.
+          </p>
+        )}
       </div>
     </div>
   );
