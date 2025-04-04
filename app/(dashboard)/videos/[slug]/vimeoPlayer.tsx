@@ -1,17 +1,23 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import Player from '@vimeo/player';
+import { Video } from '@/lib/db';
 
 interface VimeoPlayerProps {
-  video: { slug: string; url: string; title: string };
+  video: Video;
   onProgressChange?: (progress: number) => void;
 }
 
-export default function VimeoPlayer({ video, onProgressChange }: VimeoPlayerProps) {
+export default function VimeoPlayer({
+  video,
+  onProgressChange
+}: VimeoPlayerProps) {
   const playerRef = useRef<Player | null>(null);
 
   useEffect(() => {
-    const iframe = document.getElementById(`vimeo-player-${video.slug}`) as HTMLIFrameElement;
+    const iframe = document.getElementById(
+      `vimeo-player-${video.id}`
+    ) as HTMLIFrameElement;
     if (iframe) {
       playerRef.current = new Player(iframe);
       playerRef.current.on('timeupdate', (data) => {
@@ -19,11 +25,14 @@ export default function VimeoPlayer({ video, onProgressChange }: VimeoPlayerProp
         if (duration > 0) {
           const progressPercentage = (seconds / duration) * 100;
           onProgressChange && onProgressChange(progressPercentage);
-          localStorage.setItem(`progress-${video.slug}`, progressPercentage.toString());
+          localStorage.setItem(
+            `progress-${video.id}`,
+            progressPercentage.toString()
+          );
         }
       });
     }
-  }, [video.slug, onProgressChange]);
+  }, [video.id, onProgressChange]);
 
   function getVimeoEmbedUrl(url: string): string {
     const match = url.match(/vimeo\.com\/(\d+)/);
@@ -33,7 +42,7 @@ export default function VimeoPlayer({ video, onProgressChange }: VimeoPlayerProp
   return (
     <div className="aspect-video bg-black rounded-lg overflow-hidden w-full">
       <iframe
-        id={`vimeo-player-${video.slug}`}
+        id={`vimeo-player-${video.id}`}
         src={getVimeoEmbedUrl(video.url)}
         title={video.title}
         width="100%"

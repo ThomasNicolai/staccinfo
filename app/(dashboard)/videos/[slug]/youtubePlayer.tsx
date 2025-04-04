@@ -1,29 +1,36 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
+import { Video } from '@/lib/db';
 
 interface YoutubePlayerProps {
-  video: {slug: string; url: string; title: string};
+  video: Video;
   onProgressChange?: (progress: number) => void;
 }
 
-export default function YoutubePlayer({video, onProgressChange }: YoutubePlayerProps){
+export default function YoutubePlayer({
+  video,
+  onProgressChange
+}: YoutubePlayerProps) {
   const playerRef = useRef<any>(null);
 
   useEffect(() => {
     // Ensure the Youtube IFrame API is loaded
     if (!(window as any).YT) {
       const tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
+      tag.src = 'https://www.youtube.com/iframe_api';
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
     }
 
     (window as any).onYouTubeIframeAPIReady = () => {
-      playerRef.current = new (window as any).YT.Player(`youtube-player-${video.slug}`, {
-        events: {
-          onStateChange: onPlayerStateChange,
+      playerRef.current = new (window as any).YT.Player(
+        `youtube-player-${video.id}`,
+        {
+          events: {
+            onStateChange: onPlayerStateChange
+          }
         }
-      });
+      );
     };
 
     function onPlayerStateChange(event: any) {
@@ -34,31 +41,34 @@ export default function YoutubePlayer({video, onProgressChange }: YoutubePlayerP
           if (currentTime && duration) {
             const progressPercentage = (currentTime / duration) * 100;
             onProgressChange && onProgressChange(progressPercentage);
-            localStorage.setItem(`progress-${video.slug}`, progressPercentage.toString());
+            localStorage.setItem(
+              `progress-${video.id}`,
+              progressPercentage.toString()
+            );
           }
         }, 1000); // Updates progress every second
       }
     }
-  }, [video.slug, onProgressChange]);
+  }, [video.id, onProgressChange]);
 
   function getYouTubeEmbedUrl(url: string): string {
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^?&]+)/);
+    const match = url.match(
+      /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^?&]+)/
+    );
     return match ? `https://www.youtube.com/embed/${match[1]}` : url;
   }
-    
 
-
-
-  return (<div className="aspect-video bg-black rounded-lg overflow-hidden w-full">
-    <iframe
-      id={`youtube-player-${video.slug}`}
-      src={getYouTubeEmbedUrl(video.url)}
-      title={video.title}
-      width="100%"
-      height="100%"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-    ></iframe>
-  </div>
+  return (
+    <div className="aspect-video bg-black rounded-lg overflow-hidden w-full">
+      <iframe
+        id={`youtube-player-${video.id}`}
+        src={getYouTubeEmbedUrl(video.url)}
+        title={video.title}
+        width="100%"
+        height="100%"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
   );
 }
