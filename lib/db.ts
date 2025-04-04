@@ -85,7 +85,7 @@ export type Video = {
   title: string;
   url: string;
   length: number;
-  tag: string;
+  tag: string[] | string;
 };
 
 export type Article = {

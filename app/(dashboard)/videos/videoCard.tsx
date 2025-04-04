@@ -42,8 +42,9 @@ export default function VideoCard({ video }: { video: Video }) {
   };
 
   // Split the tags string into an array of individual tags
-  const videoTags =
-    typeof video.tag === 'string'
+  const videoTags = Array.isArray(video.tag)
+    ? video.tag // Already an array, use it directly
+    : typeof video.tag === 'string'
       ? video.tag
           .split(',')
           .map((tag) => tag.trim())
