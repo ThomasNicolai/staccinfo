@@ -20,15 +20,6 @@ export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
 export const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);
 
-export const products = pgTable('products', {
-  id: serial('id').primaryKey(),
-  imageUrl: text('image_url').notNull(),
-  name: text('name').notNull(),
-  status: statusEnum('status').notNull(),
-  price: numeric('price', { precision: 10, scale: 2 }).notNull(),
-  stock: integer('stock').notNull(),
-  availableAt: timestamp('available_at').notNull()
-});
 
 // First, define the suggestions table
 export const suggestions = pgTable('suggestions', {
@@ -67,13 +58,36 @@ export const suggestionVotes = pgTable(
   }
 );
 
+export const videos = pgTable('videos', {
+  id: serial('video_id').primaryKey(),
+  title: text('title').notNull(),
+  url: text('url').notNull(),
+  length: numeric('video_length').notNull(),
+  tag: text('tags').notNull(),
+});
+
+export const suggestion_comments = pgTable('comments_on_suggestions', {
+  id: serial('comment_id').primaryKey(),
+  suggestion_id: integer('suggestion_id')
+    .notNull()
+    .references(() => suggestions.id),
+  user_id: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  parent_id: integer('parent_id').references((): any => suggestion_comments.id), // For nested comments
+  content: text('comment').notNull(),
+  created_at: timestamp('created_at').notNull().defaultNow()
+});
+
+
 export type Video = {
-  id: string;
-  slug: string;
-  length: number;
-  url: string;
+  id: number;
   title: string;
+  url: string;
+  length: number;
+  tag: string;
 };
+
 export type Article = {
   id: string;
   slug: string;
@@ -81,118 +95,69 @@ export type Article = {
   content: string;
 };
 
-export type SelectProduct = typeof products.$inferSelect;
-export const insertProductSchema = createInsertSchema(products);
-
-export async function getProducts(
-  search: string,
-  offset: number
-): Promise<{
-  products: SelectProduct[];
-  newOffset: number | null;
-  totalProducts: number;
-}> {
-  // Always search the full table, not per page
-  if (search) {
-    return {
-      products: await db
-        .select()
-        .from(products)
-        .where(ilike(products.name, `%${search}%`))
-        .limit(1000),
-      newOffset: null,
-      totalProducts: 0
-    };
-  }
-
-  if (offset === null) {
-    return { products: [], newOffset: null, totalProducts: 0 };
-  }
-
-  let totalProducts = await db.select({ count: count() }).from(products);
-  let moreProducts = await db.select().from(products).limit(5).offset(offset);
-  let newOffset = moreProducts.length >= 5 ? offset + 5 : null;
-
-  return {
-    products: moreProducts,
-    newOffset,
-    totalProducts: totalProducts[0].count
-  };
+export type Comment = {
+  id: number;
+  suggestion_id: number;
+  user_id: number;
+  parent_id: number | null;
+  content: string;
+  created_at: Date;
+  username: string;
+  replies?: Comment[]; 
 }
-export async function getVideos(): Promise<{
-  videos: Video[];
-}> {
-  const dummyVideo1: Video = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    length: 180,
-    title: 'Kom i gang med obligasjoner',
-    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
 
+export async function getVideos(): Promise<{ videos: Video[] }> {
+  const result = await db
+    .select({
+      id: videos.id,
+      title: videos.title,
+      url: videos.url,
+      length: videos.length,
+      tag: videos.tag,
+    })
+    .from(videos)
+    .execute();
+  
+  // Convert the database result to match your Video type exactly
+  const typedVideos: Video[] = result.map(video => ({
+    id: Number(video.id),
+    title: video.title,
+    url: video.url,
+    length: Number(video.length), // Convert numeric to number
+    tag: video.tag
+  }));
+  
+  return { videos: typedVideos };
+}
+
+export async function getVideo(id: number): Promise<{ video: Video | null }> {
+  const result = await db
+    .select({
+      id: videos.id,
+      title: videos.title,
+      url: videos.url,
+      length: videos.length,
+      tag: videos.tag,
+    })
+    .from(videos)
+    .where(eq(videos.id, id))
+    .limit(1)
+    .execute();
+  
+  if (!result[0]) return { video: null };
+  
+  // Convert the database result to match your Video type
+  const typedVideo: Video = {
+    id: Number(result[0].id),
+    title: result[0].title,
+    url: result[0].url,
+    length: Number(result[0].length), // Convert numeric to number
+    tag: result[0].tag
   };
   
-  const dummyVideo2: Video = {
-    id: '2',
-    slug: 'kom-i-gang-med-aksjer',
-    length: 180,
-    title: 'Kom i gang med aksjer',
-    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
-
-  };
-  
-  const dummyVideo3: Video = {
-    id: '3',
-    slug: 'kom-i-gang-med-investeringer',
-    length: 180,
-    title: 'Kom i gang med investeringer',
-    url: 'https://www.youtube.com/embed/Ni7X2dt0Yx4'
-
-  };
-
-  const dummyVideo4: Video = {
-    id: '4',
-    slug: 'kom-i-gang-med-rapport',
-    length: 180,
-    title: 'Kom i gang med rapport',
-    url: 'https://www.youtube.com/watch?v=yDxSn-ZUVE0&ab_channel=MagnusMidtb%C3%B8'
-
-  };
-
-  const Video5: Video = {
-    id: '5',
-    slug: 'kom-i-gang-med-sparing',
-    length: 180,
-    title: 'Kom i gang med rapport (VIMEO)',
-    url: 'https://vimeo.com/358629078'
-
-  };
-
-  const dummyVideo6: Video = {
-    id: '6',
-    slug: 'kom-i-gang-med-penger',
-    length: 180,
-    title: 'Kom i gang med aksjer (VIMEO)',
-    url: 'https://vimeo.com/76979871'
-
-  };
-
-  const dummyVideo7: Video = {
-    id: '7',
-    slug: 'kom-i-gang-med-fond',
-    length: 180,
-    title: 'Kom i gang med fond (VIMEO)',
-    url: 'https://vimeo.com/572521128'
-
-  };
-  const dummyVideos = [dummyVideo1, dummyVideo2, dummyVideo3, dummyVideo4, Video5, dummyVideo6, dummyVideo7];
-  return { videos: dummyVideos };
+  return { video: typedVideo };
 }
-export async function getVideo(slug: string): Promise<{ video: Video | null }> {
-  const { videos } = await getVideos(); // Fetch all videos
-  const video = videos.find((v) => v.slug === slug); // Find the correct video
-  
-  return video ? { video } : { video: null }; // Return video or null if not found
-}
+
 export async function getArticles(): Promise<{
   articles: Article[];
 }> {
@@ -233,9 +198,6 @@ export async function getArticle(slug: string): Promise<{
   return { article: dummyArticle1 };
 }
 
-export async function deleteProductById(id: number) {
-  await db.delete(products).where(eq(products.id, id));
-}
 
 // Updated function with tag filtering and sorting AND vote counts
 export async function getSuggestions(tag_name?: string) {
@@ -434,4 +396,71 @@ export async function postSuggestion(
     console.error('Error posting suggestion:', error);
     throw error;
   }
+}
+
+export async function getCommentsForSuggestion(
+  suggestion_id: number
+): Promise<Comment[]> {
+  const allComments = await db
+    .select({
+      id: suggestion_comments.id,
+      suggestion_id: suggestion_comments.suggestion_id,
+      content: suggestion_comments.content,
+      created_at: suggestion_comments.created_at,
+      user_id: suggestion_comments.user_id,
+      parent_id: suggestion_comments.parent_id,
+      username: users.username
+    })
+    .from(suggestion_comments)
+    .innerJoin(users, eq(suggestion_comments.user_id, users.id))
+    .where(eq(suggestion_comments.suggestion_id, suggestion_id))
+    .orderBy(desc(suggestion_comments.created_at)) 
+    .execute();
+
+    const commentMap: Record<number, Comment> = {};
+    
+    allComments.forEach(comment => {
+      commentMap[comment.id] = {
+        ...comment,
+        replies: [] // Initialize empty replies array
+      };
+    });
+    
+    // Root comments (no parent)
+    const rootComments: Comment[] = [];
+    
+    // Organize comments into parent-child relationships
+    allComments.forEach(comment => {
+      if (comment.parent_id === null) {
+        // This is a root level comment
+        rootComments.push(commentMap[comment.id]);
+      } else {
+        // This is a reply - add it to its parent's replies
+        if (commentMap[comment.parent_id]) {
+          commentMap[comment.parent_id].replies!.push(commentMap[comment.id]);
+        }
+      }
+    });
+    
+    return rootComments;
+  }
+
+
+// Add to lib/db.ts if not already there
+export async function addComment(
+  suggestion_id: number,
+  user_id: number,
+  content: string,
+  parent_id?: number | null
+) {
+  return db
+    .insert(suggestion_comments)
+    .values({
+      suggestion_id,
+      user_id,
+      content,
+      parent_id: parent_id || null
+    })
+    .returning()
+    .execute();
 }

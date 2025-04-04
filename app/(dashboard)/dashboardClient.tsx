@@ -1,15 +1,15 @@
-<<<<<<< HEAD
-// app/page.tsx
 'use client';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function HomePage() {
+export default function HomePageClient() {
+  const { data: session } = useSession();
   const [activeIndex, setActiveIndex] = useState(0);
 
   const menuItems = [
     { label: 'Moduler', icon: 'Modules.png' },
-    { label: 'Rapporter', icon: 'Reports.png' },
+    { label: 'Rappporter', icon: 'Reports.png' },
     {
       label: 'Ekstra funksjonalitet',
       icon: 'Wand.png',
@@ -26,7 +26,9 @@ export default function HomePage() {
     <div className="flex flex-col relative items-center w-full min-h-screen overflow-y-auto overflow-hidden m-0 p-0">
       {/* Title*/}
       <div className="flex flex-col items-center pt-20">
-        <h1 className="text-5xl font-bold">Velkommen tilbake!</h1>
+        <h1 className="text-5xl font-bold">
+          Velkommen tilbake, {session?.user?.name}!
+        </h1>
       </div>
 
       {/* Description*/}
@@ -144,7 +146,7 @@ export default function HomePage() {
       {/* Se mer box */}
       <div className="pt-5 pb-20 ">
         <Link
-          href="/products"
+          href="/articles"
           className="flex gap-2 justify-center items-center "
         >
           {/* Should switch link to products page */}
@@ -332,10 +334,4 @@ export default function HomePage() {
       </div>
     </div>
   );
-=======
-import HomePageClient from './dashboardClient';
-
-export default async function HomePage() {
-  return <HomePageClient />;
->>>>>>> origin/main
 }

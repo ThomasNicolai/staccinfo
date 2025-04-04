@@ -5,6 +5,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import type { Video } from '@/lib/db';
+import { useState } from 'react';
 
 // Function to extract YouTube video ID and get thumbnail
 function getThumbnail(url: string): string {
@@ -12,35 +13,76 @@ function getThumbnail(url: string): string {
     const match = url.match(/vimeo.com\/(\d+)/);
     const videoId = match ? match[1] : null;
     return videoId
-    ? `https://vumbnail.com/${videoId}.jpg`
-    : 'https://placehold.co/600x400?text=Video+Thumbnail';
-  } else if (url.includes('youtube.com') || url.includes("youtu.be")) {
+      ? `https://vumbnail.com/${videoId}.jpg`
+      : 'https://placehold.co/600x400?text=Video+Thumbnail';
+  } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
     // Extract video ID from YouTube URL
     const regExp =
       /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
     const videoId = match && match[7].length == 11 ? match[7] : null;
 
-    // Return high-quality thumbnail URL if ID is found
-    return videoId
-      ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-      : 'https://placehold.co/600x400?text=Video+Thumbnail';
+    if (!videoId) return 'https://placehold.co/600x400?text=Video+Thumbnail';
+
+    // Use maxresdefault for highest quality thumbnails
+    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   }
   return 'https://placehold.co/600x400?text=Video+Thumbnail';
 }
 
+// Function to format duration from seconds to MM:SS
+function formatDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
 export default function VideoCard({ video }: { video: Video }) {
+  const [thumbnailError, setThumbnailError] = useState(false);
+
+  // Handle thumbnail loading error - fallback to lower quality
+  const handleImageError = () => {
+    setThumbnailError(true);
+  };
+
+  // Get the appropriate thumbnail URL, with fallback
+  const getThumbnailWithFallback = () => {
+    if (thumbnailError) {
+      if (video.url.includes('youtube.com') || video.url.includes('youtu.be')) {
+        const regExp =
+          /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        const match = video.url.match(regExp);
+        const videoId = match && match[7].length == 11 ? match[7] : null;
+
+        if (videoId) {
+          return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+        }
+      }
+    }
+
+    return getThumbnail(video.url);
+  };
+
+  // Split the tags string into an array of individual tags
+  const videoTags =
+    typeof video.tag === 'string'
+      ? video.tag
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0)
+      : [];
+
   return (
     <Card className="h-full">
-      <div className="aspect-[4/3] relative overflow-hidden">
+      <div className="aspect-video relative overflow-hidden">
         <img
-          src={getThumbnail(video.url)}
+          src={getThumbnailWithFallback()}
           alt={`${video.title} thumbnail`}
           className="object-cover w-full h-full"
+          onError={handleImageError}
         />
-        {/* Optional play button overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-black bg-opacity-30 rounded-full p-3">
+          <div className="bg-black bg-opacity-40 rounded-full p-3 hover:bg-opacity-60 transition-all">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -54,10 +96,23 @@ export default function VideoCard({ video }: { video: Video }) {
         </div>
       </div>
       <CardHeader className="p-4">
-        <CardTitle className="text-lg">{video.title}</CardTitle>
-        <CardDescription>
-          {Math.floor(video.length / 60)}:
-          {String(video.length % 60).padStart(2, '0')} min
+        <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {videoTags.length > 0 ? (
+            videoTags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded"
+              >
+                {tag}
+              </span>
+            ))
+          ) : (
+            <span className="text-gray-500 text-xs">No tags</span>
+          )}
+        </div>
+        <CardDescription className="mt-2">
+          {formatDuration(video.length)}
         </CardDescription>
       </CardHeader>
     </Card>
