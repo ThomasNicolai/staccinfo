@@ -37,6 +37,18 @@ export default function VideoDetailContent({
             {/* Video metadata */}
             <div className="mt-4 flex items-center justify-between">
               <div className="flex flex-wrap gap-2">
+                {Array.isArray(video.tag) ? (
+                  video.tag.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded"
+                    >
+                      {tag}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-500 text-xs">No tags</span>
+                )}
                 {typeof video.tag === 'string' &&
                   video.tag.split(',').map((tag, i) => (
                     <span

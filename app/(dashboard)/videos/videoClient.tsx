@@ -5,17 +5,22 @@ import { Video } from '@/lib/db';
 import VideoCard from './videoCard';
 import Link from 'next/link';
 
-// Helper function to safely get tags from a video
 function getTagsArray(video: Video): string[] {
-  // Check if tag exists and is a string
-  if (!video.tag || typeof video.tag !== 'string') {
-    return [];
+  // Check if tag is an array
+  if (Array.isArray(video.tag)) {
+    return video.tag;
   }
 
-  return video.tag
-    .split(',')
-    .map((t) => t.trim())
-    .filter((t) => t.length > 0);
+  // Check if tag exists and is a string
+  if (typeof video.tag === 'string') {
+    return video.tag
+      .split(',')
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+  }
+
+  // Default case: no tags
+  return [];
 }
 
 export default function VideoClient({

@@ -7,7 +7,6 @@ import { notFound } from 'next/navigation';
 import { Video } from '@/lib/db';
 
 export default async function VideoDetailPage({ params }: { params: any }) {
-  // Cast params to the expected plain object type
   const { slug } = await params;
   const videoId = parseInt(slug, 10);
   if (isNaN(videoId)) {
@@ -19,23 +18,37 @@ export default async function VideoDetailPage({ params }: { params: any }) {
   }
   const { videos } = await getVideos();
 
+  console.log('Current video:', video.id, 'tag:', video.tag);
+
   let relatedVideos: Video[] = [];
 
-  if (video.tag && typeof video.tag === 'string') {
-    const videoTags = video.tag.split(',').map((tag) => tag.trim());
+  const videoTags = Array.isArray(video.tag)
+    ? video.tag
+    : typeof video.tag === 'string'
+      ? video.tag.split(',').map((tag) => tag.trim())
+      : [];
 
+  if (videoTags.length > 0) {
     relatedVideos = videos
-      .filter(
-        (v) =>
-          // Don't include the current video
-          v.id !== video.id &&
-          // Make sure the video has tags
-          v.tag &&
-          // Check if any tags match
-          typeof v.tag === 'string' &&
-          videoTags.some((tag) => v.tag.includes(tag))
-      )
-      .slice(0, 4); // Limit to 4 related videos
+      .filter((v) => {
+        // Don't include the current video
+        if (v.id === video.id) return false;
+
+        // Get tags from the other video (handle both array and string formats)
+        const otherTags = Array.isArray(v.tag)
+          ? v.tag
+          : typeof v.tag === 'string'
+            ? v.tag.split(',').map((t) => t.trim())
+            : [];
+
+        console.log('Checking video:', v.id, 'tags:', otherTags);
+
+        // Check for matches
+        const matches = videoTags.some((tag) => otherTags.includes(tag));
+        console.log('Matches:', matches);
+        return matches;
+      })
+      .slice(0, 4);
   }
 
   return (
