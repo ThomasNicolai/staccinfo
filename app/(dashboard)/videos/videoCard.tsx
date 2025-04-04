@@ -6,29 +6,7 @@ import {
 } from '@/components/ui/card';
 import type { Video } from '@/lib/db';
 import { useState } from 'react';
-
-// Function to extract YouTube video ID and get thumbnail
-function getThumbnail(url: string): string {
-  if (url.includes('vimeo.com')) {
-    const match = url.match(/vimeo.com\/(\d+)/);
-    const videoId = match ? match[1] : null;
-    return videoId
-      ? `https://vumbnail.com/${videoId}.jpg`
-      : 'https://placehold.co/600x400?text=Video+Thumbnail';
-  } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    // Extract video ID from YouTube URL
-    const regExp =
-      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    const videoId = match && match[7].length == 11 ? match[7] : null;
-
-    if (!videoId) return 'https://placehold.co/600x400?text=Video+Thumbnail';
-
-    // Use maxresdefault for highest quality thumbnails
-    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-  }
-  return 'https://placehold.co/600x400?text=Video+Thumbnail';
-}
+import { getThumbnail } from './videoUtils';
 
 // Function to format duration from seconds to MM:SS
 function formatDuration(seconds: number): string {

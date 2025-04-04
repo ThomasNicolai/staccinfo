@@ -1,13 +1,16 @@
-"use client";
+'use client';
 import { useState } from 'react';
 import VideoPlayer from './videoPlayer';
+import { Video } from '@/lib/db';
+import Link from 'next/link';
+import { getThumbnail, formatDuration } from '../videoUtils'; // Use the utilities file
 
 export default function VideoDetailContent({
   video,
-  relatedVideos,
+  relatedVideos
 }: {
-  video: { slug: string; url: string; title: string };
-  relatedVideos: any[];
+  video: Video;
+  relatedVideos: Video[];
 }) {
   const [progress, setProgress] = useState(0);
 
@@ -16,11 +19,11 @@ export default function VideoDetailContent({
     { time: 60, title: 'Background Information' },
     { time: 120, title: 'Main Topic' },
     { time: 180, title: 'Key Takeaways' },
-    { time: 240, title: 'Conclusion' },
+    { time: 240, title: 'Conclusion' }
   ];
 
   const goToChapter = (time: number) => {
-    console.log("Seeking to", time);
+    console.log('Seeking to', time);
   };
 
   return (
@@ -30,32 +33,77 @@ export default function VideoDetailContent({
         <div className="flex-[1.2] space-y-10">
           <div className="video-player-wrapper bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg">
             <VideoPlayer video={video} onProgressChange={setProgress} />
+
+            {/* Video metadata */}
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex flex-wrap gap-2">
+                {typeof video.tag === 'string' &&
+                  video.tag.split(',').map((tag, i) => (
+                    <span
+                      key={i}
+                      className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded"
+                    >
+                      {tag.trim()}
+                    </span>
+                  ))}
+              </div>
+              <div className="text-sm text-gray-500">
+                Length: {formatDuration(video.length)}
+              </div>
+            </div>
           </div>
 
           <div className="related-videos bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-5">Se også</h2>
-            <ul className="space-y-3">
-              {relatedVideos.map((related) => (
-                <li key={related.id}>
-                  <a
-                    href={`/videos/${related.slug}`}
-                    className="text-base text-blue-600 hover:underline"
+            {relatedVideos.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {relatedVideos.map((related) => (
+                  <Link
+                    href={`/videos/${related.id}`}
+                    key={related.id}
+                    className="flex items-start gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
                   >
-                    {related.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
+                    <div className="w-24 h-14 bg-gray-100 flex-shrink-0 overflow-hidden rounded">
+                      {/* Thumbnail preview */}
+                      <img
+                        src={getThumbnail(related.url)}
+                        alt={related.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium line-clamp-2">
+                        {related.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDuration(related.length)}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No related videos found.</p>
+            )}
           </div>
         </div>
 
         {/* RIGHT COLUMN */}
         <div className="w-full md:w-80 space-y-10">
           <div className="progress-indicator bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-5 text-center">Progresjon</h2>
+            <h2 className="text-xl font-semibold mb-5 text-center">
+              Progresjon
+            </h2>
             <div className="justify-center">
               <svg viewBox="0 0 100 100" className="w-36 h-36 mx-auto">
-                <circle cx="50" cy="50" r="40" stroke="gray" strokeWidth="10" fill="none" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  stroke="gray"
+                  strokeWidth="10"
+                  fill="none"
+                />
                 <circle
                   cx="50"
                   cy="50"
@@ -84,7 +132,7 @@ export default function VideoDetailContent({
                     onClick={() => goToChapter(chapter.time)}
                     className="w-full text-left px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-base rounded-md transition"
                   >
-                    {chapter.title}
+                    {chapter.title} ({formatDuration(chapter.time)})
                   </button>
                 </li>
               ))}
