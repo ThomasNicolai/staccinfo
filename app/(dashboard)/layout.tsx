@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   BookOpenText,
   Clapperboard,
+  Grid2X2,
   MessageSquareText
 } from 'lucide-react';
 
@@ -71,9 +72,9 @@ function DesktopNav() {
           <BookOpenText className="h-5 w-5" />
         </NavItem>
 
-        {/* <NavItem href="/products" label="Products">
-          <Package className="h-5 w-5" />
-        </NavItem> */}
+        <NavItem href="/products" label="Products">
+          <Grid2X2 className="h-5 w-5" />
+        </NavItem>
 
         <NavItem href="/videos" label="Videos">
           <Clapperboard className="h-5 w-5" />

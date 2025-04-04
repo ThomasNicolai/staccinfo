@@ -19,7 +19,7 @@ export default async function Providers({
       image: session.user.image
     };
   } else {
-    redirect('/login');
+    //redirect('/login');
   }
   return (
     <TooltipProvider>
