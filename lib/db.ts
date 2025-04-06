@@ -15,6 +15,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
+console.log("POSTGRES_URL:", process.env.POSTGRES_URL);
+
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
@@ -35,6 +37,12 @@ export const suggestions = pgTable('suggestions', {
 export const users = pgTable('users', {
   id: serial('user_id').primaryKey(),
   username: text('username').notNull()
+});
+export const userCustomerMap = pgTable('user_customer_map', {
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  customerSeq: integer('customer_seq').notNull()
 });
 
 // Define the suggestion votes table with a function to avoid circular reference
@@ -463,4 +471,25 @@ export async function addComment(
     })
     .returning()
     .execute();
+}
+export async function getActiveLicencesByCustomer(customerSeq: number) {
+  try {
+    const result = await db.execute(
+      sql`
+        SELECT
+          CustomerSeq, CustomerName, ProductName, ModuleName, ModuleLevelName, Datefrom, DateTo
+        FROM
+          vwMasterviewLicences
+        WHERE
+          DateFrom <= NOW()
+          AND DateTo >= NOW()
+          AND CustomerSeq = ${customerSeq}
+      `
+    );
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching licenses:', error);
+    throw error;
+  }
 }
