@@ -1,10 +1,11 @@
+'use client';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import type { Video } from '@/lib/db';
+import type { Video, VideoProgression } from '@/lib/db';
 import { useState } from 'react';
 import { getThumbnail } from './videoUtils';
 
@@ -15,15 +16,11 @@ function formatDuration(seconds: number): string {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-export default function VideoCard({ video }: { video: Video }) {
+export default function VideoCard({ video, progression }: { video: Video; progression?: VideoProgression }) {
   const [thumbnailError, setThumbnailError] = useState(false);
 
-  // Handle thumbnail loading error - fallback to lower quality
-  const handleImageError = () => {
-    setThumbnailError(true);
-  };
+  const handleImageError = () => setThumbnailError(true);
 
-  // Get the appropriate thumbnail URL, with fallback
   const getThumbnailWithFallback = () => {
     if (thumbnailError) {
       if (video.url.includes('youtube.com') || video.url.includes('youtu.be')) {
@@ -41,7 +38,6 @@ export default function VideoCard({ video }: { video: Video }) {
     return getThumbnail(video.url);
   };
 
-  // Split the tags string into an array of individual tags
   const videoTags =
     typeof video.tag === 'string'
       ? video.tag
@@ -74,7 +70,9 @@ export default function VideoCard({ video }: { video: Video }) {
         </div>
       </div>
       <CardHeader className="p-4">
-        <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
+        <CardTitle className="text-lg line-clamp-2">
+          {video.title}
+        </CardTitle>
         <div className="mt-2 flex flex-wrap gap-1">
           {videoTags.length > 0 ? (
             videoTags.map((tag) => (
@@ -92,6 +90,15 @@ export default function VideoCard({ video }: { video: Video }) {
         <CardDescription className="mt-2">
           {formatDuration(video.length)}
         </CardDescription>
+        {progression ? (
+          <div className="text-sm text-gray-500 mt-2">
+            Have watched: {progression.timestamp}
+          </div>
+        ) : (
+          <div className="text-sm text-gray-500 mt-2">
+            Not watched
+          </div>
+        )}
       </CardHeader>
     </Card>
   );

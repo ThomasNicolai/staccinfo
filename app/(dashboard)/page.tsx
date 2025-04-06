@@ -1,5 +1,6 @@
 import HomePageClient from './dashboardClient';
 
-export default async function HomePage() {
+// This DashboardPage now uses the old HomePageClient dashboard, not the videos page.
+export default async function DashboardPage() {
   return <HomePageClient />;
 }

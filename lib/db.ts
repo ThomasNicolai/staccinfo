@@ -79,6 +79,25 @@ export const suggestion_comments = pgTable('comments_on_suggestions', {
   created_at: timestamp('created_at').notNull().defaultNow()
 });
 
+// NEW: Define the video_progression table
+export const videoProgression = pgTable('video_progression', {
+  video_id: integer('video_id').notNull(),
+  user_id: integer('user_id').notNull(),
+  video_finished: boolean('video_finished').notNull().default(false),
+  video_started: boolean('video_started').notNull(),
+  timestamp: numeric('timestamp').notNull(),
+  last_watchtime: timestamp('last_watchtime').notNull()
+});
+
+// NEW: Define the TypeScript type for video progression data
+export type VideoProgression = {
+  video_id: number;
+  user_id: number;
+  video_finished: boolean;
+  video_started: boolean;
+  timestamp: number;
+  last_watchtime: Date;
+};
 
 export type Video = {
   id: number;
@@ -156,6 +175,17 @@ export async function getVideo(id: number): Promise<{ video: Video | null }> {
   };
   
   return { video: typedVideo };
+}
+
+// NEW: Create a function to fetch the video progression for a given user and video.
+// This works regardless of if userId is a dummy (e.g. dummy=1) or obtained dynamically.
+export async function getVideoProgression(userId: number, videoId: number): Promise<VideoProgression | null> {
+  const result = await db.execute(sql`
+    SELECT video_id, user_id, video_finished, video_started, "timestamp" as timestamp, last_watchtime
+      FROM video_progression
+     WHERE user_id = ${userId} AND video_id = ${videoId}
+  `);
+  return result.rows[0] ? (result.rows[0] as VideoProgression) : null;
 }
 
 export async function getArticles(): Promise<{
