@@ -21,7 +21,7 @@ export function NavItem({
   const pathname = usePathname();
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={50}>
       <TooltipTrigger asChild>
         <Link
           href={href}
