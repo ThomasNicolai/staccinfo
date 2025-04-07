@@ -2,7 +2,7 @@ import { getActiveLicenses } from '@/lib/queries';
 import HomePageClient from './dashboardClient';
 
 export default async function HomePage() {
-  const licences = getActiveLicenses(190);
+  const licences = (await getActiveLicenses(190)).result;
   console.log(licences);
-  return <HomePageClient />;
+  return <HomePageClient licences={licences} />;
 }

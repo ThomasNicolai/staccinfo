@@ -3,7 +3,8 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function HomePageClient() {
+export default function HomePageClient({ licences }: { licences: any }) {
+  console.log(licences);
   const { data: session } = useSession();
   const [activeIndex, setActiveIndex] = useState(0);
   const menuItems = [
