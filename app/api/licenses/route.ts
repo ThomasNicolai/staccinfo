@@ -7,10 +7,9 @@ export async function GET() {
     return NextResponse.json({ data: licenses });
   } catch (error) {
     console.error('Error fetching licenses:', error);
-    return NextResponse.json({ error: 'Failed to fetch licenses' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch licenses' },
+      { status: 500 }
+    );
   }
 }
-
-
-
-

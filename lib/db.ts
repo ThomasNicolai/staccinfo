@@ -15,13 +15,11 @@ import {
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-console.log("POSTGRES_URL:", process.env.POSTGRES_URL);
-
+// console.log('POSTGRES_URL:', process.env.POSTGRES_URL);
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
 export const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);
-
 
 // First, define the suggestions table
 export const suggestions = pgTable('suggestions', {
@@ -61,7 +59,10 @@ export const suggestionVotes = pgTable(
   (table) => {
     return {
       // Define the unique constraint inside a function to avoid circular reference
-      uniqueVote: unique('unique_suggestion_vote').on(table.suggestion_id, table.user_id)
+      uniqueVote: unique('unique_suggestion_vote').on(
+        table.suggestion_id,
+        table.user_id
+      )
     };
   }
 );
@@ -71,7 +72,7 @@ export const videos = pgTable('videos', {
   title: text('title').notNull(),
   url: text('url').notNull(),
   length: numeric('video_length').notNull(),
-  tag: text('tags').notNull(),
+  tag: text('tags').notNull()
 });
 
 export const suggestion_comments = pgTable('comments_on_suggestions', {
@@ -86,7 +87,6 @@ export const suggestion_comments = pgTable('comments_on_suggestions', {
   content: text('comment').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow()
 });
-
 
 export type Video = {
   id: number;
@@ -111,8 +111,8 @@ export type Comment = {
   content: string;
   created_at: Date;
   username: string;
-  replies?: Comment[]; 
-}
+  replies?: Comment[];
+};
 
 export async function getVideos(): Promise<{ videos: Video[] }> {
   const result = await db
@@ -121,20 +121,20 @@ export async function getVideos(): Promise<{ videos: Video[] }> {
       title: videos.title,
       url: videos.url,
       length: videos.length,
-      tag: videos.tag,
+      tag: videos.tag
     })
     .from(videos)
     .execute();
-  
+
   // Convert the database result to match your Video type exactly
-  const typedVideos: Video[] = result.map(video => ({
+  const typedVideos: Video[] = result.map((video) => ({
     id: Number(video.id),
     title: video.title,
     url: video.url,
     length: Number(video.length), // Convert numeric to number
     tag: video.tag
   }));
-  
+
   return { videos: typedVideos };
 }
 
@@ -145,15 +145,15 @@ export async function getVideo(id: number): Promise<{ video: Video | null }> {
       title: videos.title,
       url: videos.url,
       length: videos.length,
-      tag: videos.tag,
+      tag: videos.tag
     })
     .from(videos)
     .where(eq(videos.id, id))
     .limit(1)
     .execute();
-  
+
   if (!result[0]) return { video: null };
-  
+
   // Convert the database result to match your Video type
   const typedVideo: Video = {
     id: Number(result[0].id),
@@ -162,7 +162,7 @@ export async function getVideo(id: number): Promise<{ video: Video | null }> {
     length: Number(result[0].length), // Convert numeric to number
     tag: result[0].tag
   };
-  
+
   return { video: typedVideo };
 }
 
@@ -206,7 +206,6 @@ export async function getArticle(slug: string): Promise<{
   return { article: dummyArticle1 };
 }
 
-
 // Updated function with tag filtering and sorting AND vote counts
 export async function getSuggestions(tag_name?: string) {
   // Create a subquery to count votes
@@ -231,36 +230,36 @@ export async function getSuggestions(tag_name?: string) {
       vote_count: voteSubquery.vote_count
     })
     .from(suggestions)
-    .leftJoin(
-      voteSubquery,
-      eq(suggestions.id, voteSubquery.suggestion_id)
-    );
-    
+    .leftJoin(voteSubquery, eq(suggestions.id, voteSubquery.suggestion_id));
+
   // Apply tag filtering if needed
-  const filteredQuery = tag_name 
+  const filteredQuery = tag_name
     ? baseSelect.where(eq(suggestions.tag, tag_name))
     : baseSelect;
-  
+
   // Apply ordering and execute
   const result = await filteredQuery
     .orderBy(desc(sql`COALESCE(${voteSubquery.vote_count}, 0)`))
     .execute();
-    
+
   // Get all unique tags in a separate query
   const tags = await db
     .selectDistinct({ tag: suggestions.tag })
     .from(suggestions)
     .orderBy(asc(suggestions.tag))
     .execute();
-    
+
   return {
     suggestions: result,
-    tags: tags.map(t => t.tag)
+    tags: tags.map((t) => t.tag)
   };
 }
 
 // Add function to check if user has voted
-export async function hasUserVotedSuggestion(suggestionId: number, userId: number): Promise<boolean> {
+export async function hasUserVotedSuggestion(
+  suggestionId: number,
+  userId: number
+): Promise<boolean> {
   const result = await db
     .select()
     .from(suggestionVotes)
@@ -271,7 +270,7 @@ export async function hasUserVotedSuggestion(suggestionId: number, userId: numbe
       )
     )
     .limit(1);
-    
+
   return result.length > 0;
 }
 
@@ -296,13 +295,11 @@ export async function voteSuggestion(
       return { success: true, message: 'Vote removed' };
     } else {
       // Add a new vote
-      await db
-        .insert(suggestionVotes)
-        .values({
-          suggestion_id: suggestionId,
-          user_id: userId,
-          created_at: new Date()
-        });
+      await db.insert(suggestionVotes).values({
+        suggestion_id: suggestionId,
+        user_id: userId,
+        created_at: new Date()
+      });
       return { success: true, message: 'Vote added' };
     }
   } catch (error) {
@@ -315,7 +312,10 @@ export async function voteSuggestion(
 }
 
 // Update getSuggestionWithUser to include vote info
-export async function getSuggestionWithUser(id: number, currentUserId: number = 1) {
+export async function getSuggestionWithUser(
+  id: number,
+  currentUserId: number = 1
+) {
   // Create a subquery to get vote count
   const voteCountSubquery = db
     .select({
@@ -356,27 +356,30 @@ export async function getSuggestionWithUser(id: number, currentUserId: number = 
     })
     .from(suggestions)
     .leftJoin(users, eq(suggestions.user_id, users.id))
-    .leftJoin(voteCountSubquery, eq(suggestions.id, voteCountSubquery.suggestion_id))
+    .leftJoin(
+      voteCountSubquery,
+      eq(suggestions.id, voteCountSubquery.suggestion_id)
+    )
     .leftJoin(userVoteSubquery, sql`TRUE`)
     .where(eq(suggestions.id, id))
     .limit(1)
     .execute();
-  
+
   if (!result[0]) return null;
-  
+
   const suggestion = {
     ...result[0],
     vote_count: result[0].vote_count || 0,
     user_has_voted: Boolean(result[0].user_has_voted)
   };
-  
+
   if (suggestion.is_anonymous) {
     return {
       ...suggestion,
       username: 'Anonymous'
     };
   }
-  
+
   return suggestion;
 }
 
@@ -398,7 +401,7 @@ export async function postSuggestion(
         is_anonymous: isAnonymous
       })
       .returning();
-    
+
     return result[0];
   } catch (error) {
     console.error('Error posting suggestion:', error);
@@ -422,37 +425,36 @@ export async function getCommentsForSuggestion(
     .from(suggestion_comments)
     .innerJoin(users, eq(suggestion_comments.user_id, users.id))
     .where(eq(suggestion_comments.suggestion_id, suggestion_id))
-    .orderBy(desc(suggestion_comments.created_at)) 
+    .orderBy(desc(suggestion_comments.created_at))
     .execute();
 
-    const commentMap: Record<number, Comment> = {};
-    
-    allComments.forEach(comment => {
-      commentMap[comment.id] = {
-        ...comment,
-        replies: [] // Initialize empty replies array
-      };
-    });
-    
-    // Root comments (no parent)
-    const rootComments: Comment[] = [];
-    
-    // Organize comments into parent-child relationships
-    allComments.forEach(comment => {
-      if (comment.parent_id === null) {
-        // This is a root level comment
-        rootComments.push(commentMap[comment.id]);
-      } else {
-        // This is a reply - add it to its parent's replies
-        if (commentMap[comment.parent_id]) {
-          commentMap[comment.parent_id].replies!.push(commentMap[comment.id]);
-        }
-      }
-    });
-    
-    return rootComments;
-  }
+  const commentMap: Record<number, Comment> = {};
 
+  allComments.forEach((comment) => {
+    commentMap[comment.id] = {
+      ...comment,
+      replies: [] // Initialize empty replies array
+    };
+  });
+
+  // Root comments (no parent)
+  const rootComments: Comment[] = [];
+
+  // Organize comments into parent-child relationships
+  allComments.forEach((comment) => {
+    if (comment.parent_id === null) {
+      // This is a root level comment
+      rootComments.push(commentMap[comment.id]);
+    } else {
+      // This is a reply - add it to its parent's replies
+      if (commentMap[comment.parent_id]) {
+        commentMap[comment.parent_id].replies!.push(commentMap[comment.id]);
+      }
+    }
+  });
+
+  return rootComments;
+}
 
 // Add to lib/db.ts if not already there
 export async function addComment(

@@ -6,7 +6,6 @@ import { useState } from 'react';
 export default function HomePageClient() {
   const { data: session } = useSession();
   const [activeIndex, setActiveIndex] = useState(0);
-
   const menuItems = [
     { label: 'Moduler', icon: 'Modules.png' },
     { label: 'Rappporter', icon: 'Reports.png' },

@@ -1,6 +1,5 @@
 import { db } from '@/lib/db';
 import { users } from '@/lib/db';
-import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -9,20 +8,9 @@ export async function GET() {
     return NextResponse.json({ users: allUsers });
   } catch (error) {
     console.error('Error fetching users:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    );
   }
 }
-import { db } from '@/lib/db';
-import { users } from '@/lib/db';
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  try {
-    const allUsers = await db.select().from(users);
-    return NextResponse.json({ users: allUsers });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
-  }
-}
-
