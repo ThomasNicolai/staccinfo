@@ -1,51 +1,41 @@
-import { db } from './db';
-import { sql } from 'drizzle-orm';
+import sql from 'mssql';
 
-export async function getActiveLicenses(customerSeq: number) {
-  const result = await db.execute(
-    sql`
-      SELECT 
-        "CustomerSeq", 
-        "CustomerName", 
-        "ProductName", 
-        "ModuleName", 
-        "ModuleLevelName", 
-        "DateFrom", 
-        "DateTo"
-      FROM vwMasterviewLicences
-      WHERE 
-        "DateFrom" <= CURRENT_DATE 
-        AND "DateTo" >= CURRENT_DATE 
-        AND "CustomerId" = ${customerSeq};
-    `
-  );
-  return result.rows;
-}
-
-import { db } from './db';
-import { sql } from 'drizzle-orm';
+const config = {
+  user: 'StaccUIB',
+  password: 'puoNma01ZGpAGAep',
+  server: 'stacc.database.windows.net',
+  database: 'EscaliLicencesDev',
+  options: {
+    encrypt: true, // for Azure
+  },
+};
 
 export async function getActiveLicenses(customerId: number) {
-  const result = await db.execute(
-    sql`
+  try {
+    await sql.connect(config);
+
+    const result = await sql.query(`
       SELECT
-        "CustomerSeq",
-        "CustomerName",
-        "ProductName",
-        "ModuleName",
-        "ModuleLevelName",
-        "DateFrom",
-        "DateTo"
-      FROM "vwMasterviewLicences"
+        CustomerSeq,
+        CustomerName,
+        ProductName,
+        ModuleName,
+        ModuleLevelName,
+        DateFrom,
+        DateTo
+      FROM vwMasterviewLicences
       WHERE
-        "DateFrom" <= CURRENT_DATE
-        AND "DateTo" >= CURRENT_DATE
-        AND "CustomerId" = ${customerId};
-    `
-  );
+        DateFrom <= GETDATE()
+        AND DateTo >= GETDATE()
+        AND CustomerId = ${customerId}
+    `);
 
-  return result.rows;
+    return result.recordset;
+  } catch (error) {
+    console.error('SQL Server query error:', error);
+    throw error;
+  } finally {
+    await sql.close();
+  }
 }
-
-
 

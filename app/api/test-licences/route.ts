@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getActiveLicencesByCustomer } from '@/lib/db';
+import { getActiveLicenses } from '@/lib/queries';
 
 export async function GET() {
   try {
-    const licences = await getActiveLicencesByCustomer(190);
-    return NextResponse.json({ licences });
+    const data = await getActiveLicenses(190); // Change ID as needed
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch licences' }, { status: 500 });
   }
 }
+
