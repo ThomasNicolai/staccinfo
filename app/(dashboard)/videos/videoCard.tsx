@@ -63,12 +63,7 @@ export default function VideoCard({ video, progression }: { video: Video; progre
           className="object-cover w-full h-full"
           onError={handleImageError}
         />
-        {/* Checkmark overlay if video finished */}
-        {progression?.video_finished && (
-          <div className="absolute top-2 right-2">
-            <img src="/checkmark.png" alt="Finished" className="w-6 h-6" />
-          </div>
-        )}
+        {/* Removed finished indicator overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-black bg-opacity-40 rounded-full p-3 hover:bg-opacity-60 transition-all">
             <svg

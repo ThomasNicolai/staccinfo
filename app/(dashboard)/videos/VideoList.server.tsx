@@ -5,10 +5,10 @@ import VideoCard from './videoCard';
 import type { Video } from '@/lib/db';
 
 export default async function VideoList() {
-  // Set dummy userId to 1
+  // Set dummy userId to 1, needs to be changed to the actual userId
   const userId = 1;
   
-  // Fetch the list of videos.
+  // Fetch all videos.
   const { videos } = await getVideos();
   
   // For each video, fetch its progression data.
