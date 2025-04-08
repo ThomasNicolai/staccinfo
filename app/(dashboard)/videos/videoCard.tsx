@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardDescription,
@@ -5,54 +6,60 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import type { Video } from '@/lib/db';
+import type { VideoProgression } from '@/lib/db';
 import { useState } from 'react';
 import { getThumbnail } from './videoUtils';
 
-// Function to format duration from seconds to MM:SS
+// Function to format duration: outputs hh:mm:ss if seconds >= 3600, otherwise mm:ss
 function formatDuration(seconds: number): string {
+  if (seconds >= 3600) {
+    const hours = Math.floor(seconds / 3600);
+    const remainder = seconds % 3600;
+    const minutes = Math.floor(remainder / 60);
+    const sec = Math.floor(remainder % 60);
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  }
   const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  const sec = Math.floor(seconds % 60);
+  return `${minutes}:${sec.toString().padStart(2, '0')}`;
 }
 
-export default function VideoCard({ video }: { video: Video }) {
+export default function VideoCard({
+  video,
+  progression
+}: {
+  video: Video;
+  progression?: VideoProgression & { ts?: number };
+}) {
   const [thumbnailError, setThumbnailError] = useState(false);
+  const handleImageError = () => setThumbnailError(true);
 
-  // Handle thumbnail loading error - fallback to lower quality
-  const handleImageError = () => {
-    setThumbnailError(true);
-  };
-
-  // Get the appropriate thumbnail URL, with fallback
+  // Get thumbnail URL with a fallback
   const getThumbnailWithFallback = () => {
     if (thumbnailError) {
       if (video.url.includes('youtube.com') || video.url.includes('youtu.be')) {
         const regExp =
-          /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+          /^.*((youtu\.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         const match = video.url.match(regExp);
         const videoId = match && match[7].length == 11 ? match[7] : null;
-
         if (videoId) {
           return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
         }
       }
     }
-
     return getThumbnail(video.url);
   };
 
-  // Split the tags string into an array of individual tags
+  // Convert tags to an array.
   const videoTags = Array.isArray(video.tag)
-    ? video.tag // Already an array, use it directly
+    ? video.tag
     : typeof video.tag === 'string'
-      ? video.tag
-          .split(',')
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0)
+      ? video.tag.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
       : [];
 
   return (
     <Card className="h-full">
+      {/* Thumbnail section */}
       <div className="aspect-video relative overflow-hidden">
         <img
           src={getThumbnailWithFallback()}
@@ -74,11 +81,12 @@ export default function VideoCard({ video }: { video: Video }) {
           </div>
         </div>
       </div>
+      {/* Card header with title, tags and duration, plus progression fallback */}
       <CardHeader className="p-4">
         <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
         <div className="mt-2 flex flex-wrap gap-1">
           {videoTags.length > 0 ? (
-            videoTags.map((tag) => (
+            videoTags.map(tag => (
               <span
                 key={tag}
                 className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded"
@@ -89,6 +97,10 @@ export default function VideoCard({ video }: { video: Video }) {
           ) : (
             <span className="text-gray-500 text-xs">No tags</span>
           )}
+        </div>
+        {/* Explicitly check for ts being defined */}
+        <div className="text-xs text-gray-500 mt-1">
+          {progression && progression.ts !== undefined ? `Timestamp: ${progression.ts}` : 'Not started'}
         </div>
         <CardDescription className="mt-2">
           {formatDuration(video.length)}
