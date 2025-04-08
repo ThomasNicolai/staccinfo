@@ -88,6 +88,24 @@ export const suggestion_comments = pgTable('comments_on_suggestions', {
   created_at: timestamp('created_at').notNull().defaultNow()
 });
 
+export const videoProgression = pgTable('video_progression', {
+  video_id: integer('video_id').notNull(),
+  user_id: integer('user_id').notNull(),
+  video_finished: boolean('video_finished').notNull().default(false),
+  video_started: boolean('video_started').notNull(),
+  timestamp: numeric('timestamp').notNull(),
+  last_watchtime: timestamp('last_watchtime').notNull()
+});
+
+export type VideoProgression = {
+  video_id: number;
+  user_id: number;
+  video_finished: boolean;
+  video_started: boolean;
+  ts: number; // renamed field
+  last_watchtime: Date;
+};
+
 export type Video = {
   id: number;
   title: string;
@@ -205,6 +223,33 @@ export async function getArticle(slug: string): Promise<{
   };
   return { article: dummyArticle1 };
 }
+
+export async function getVideoProgression(userId: number, videoId: number): Promise<VideoProgression | null> {
+  const result = await db.execute(sql`
+    SELECT
+      video_id,
+      user_id,
+      video_finished,
+      video_started,
+      "timestamp" as watchtime,
+      last_watchtime
+    FROM video_progression
+    WHERE user_id = ${userId} AND video_id = ${videoId}
+  `);
+  if (result.rows[0]) {
+    const raw = result.rows[0] as any;
+    return {
+      video_id: Number(raw.video_id),
+      user_id: Number(raw.user_id),
+      video_finished: raw.video_finished,
+      video_started: raw.video_started,
+      ts: Number(raw.watchtime), // mapping renamed field to ts
+      last_watchtime: raw.last_watchtime
+    };
+  }
+  return null;
+}
+
 
 // Updated function with tag filtering and sorting AND vote counts
 export async function getSuggestions(tag_name?: string) {
