@@ -57,6 +57,11 @@ export default function VideoCard({
       ? video.tag.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
       : [];
 
+  // Calculate progress percentage if progression and video length exist.
+  const progressPercentage = progression && video.length
+    ? Math.min((progression.ts / video.length) * 100, 100)
+    : 0;
+
   return (
     <Card className="h-full">
       {/* Thumbnail section */}
@@ -81,7 +86,24 @@ export default function VideoCard({
           </div>
         </div>
       </div>
-      {/* Card header with title, tags and duration, plus progression fallback */}
+      {/* Place progress bar below the thumbnail container if progression exists and not finished */}
+      {(progression && progression.ts > 0 && !progression.video_finished) && (
+        <div className="mt-2 px-2">
+          <div className="bg-gray-300 rounded h-2">
+            <div
+              className="bg-blue-500 h-2 rounded"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+        </div>
+      )}
+      {/* If video is finished, display the watched text below the progress bar with increased left margin */}
+      {progression && progression.video_finished && (
+        <div className="mt-2 ml-4 text-xs text-green-600 font-bold">
+          Watched
+        </div>
+      )}
+      {/* Card header with title, tags and duration */}
       <CardHeader className="p-4">
         <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
         <div className="mt-2 flex flex-wrap gap-1">
@@ -97,10 +119,6 @@ export default function VideoCard({
           ) : (
             <span className="text-gray-500 text-xs">No tags</span>
           )}
-        </div>
-        {/* Explicitly check for ts being defined */}
-        <div className="text-xs text-gray-500 mt-1">
-          {progression && progression.ts !== undefined ? `Timestamp: ${progression.ts}` : 'Not started'}
         </div>
         <CardDescription className="mt-2">
           {formatDuration(video.length)}
