@@ -128,8 +128,15 @@ function MobileNav() {
             href="/articles"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <ShoppingCart className="h-5 w-5" />
+            <BookOpenText className="h-5 w-5" />
             Articles
+          </Link>
+          <Link
+            href="/products"
+            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+          >
+            <Grid2X2 className="h-5 w-5" />
+            Products
           </Link>
           <Link
             href="/suggestions"
@@ -143,7 +150,7 @@ function MobileNav() {
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Clapperboard className="h-5 w-5" />
-            Settings
+            Videos
           </Link>
         </nav>
       </SheetContent>
