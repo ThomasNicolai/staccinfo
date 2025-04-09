@@ -6,6 +6,31 @@ export default async function ReportPage({
   params: Promise<{ reportName: string }>;
 }) {
   const reportName = (await params).reportName;
+  // Normalize string to remove accents for matching
+  const normalizedName = reportName
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  let pdfUrl = '';
+
+  if (normalizedName.includes('likviditetsrapport')) {
+    pdfUrl = '/Likviditetsrapport.pdf';
+  } else if (normalizedName.includes('covenant')) {
+    pdfUrl = '/Covenant.pdf';
+  } else if (
+    normalizedName.includes('valutaeksponering') &&
+    normalizedName.includes('kontantstrom')
+  ) {
+    pdfUrl = '/Valutaeksponering - Kontantstrøm.pdf';
+  }
+
+  // Use Example_raport.pdf if no specific PDF is found
+  pdfUrl = pdfUrl || '/Example_raport.pdf';
+
+  // Capitalize the first letter of the reportName
+  const displayTitle = reportName.charAt(0).toUpperCase() + reportName.slice(1);
+
   return (
     <div className="relative overflow-x-hidden">
       {/* Dekorativ uthult sirkel i bakgrunnen */}

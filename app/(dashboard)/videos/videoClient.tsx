@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Video, VideoProgression } from '@/lib/db';
 import VideoCard from './videoCard';
 import Link from 'next/link';

@@ -69,7 +69,7 @@ export default function HomePageClient({ licences }: { licences: any }) {
                 activeIndex === index ? 'invert brightness-200' : ''
               }`}
             />
-            {item.label}
+            <span className="text-xs md:text-sm">{item.label}</span>
           </span>
         ))}
       </div>
