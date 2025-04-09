@@ -5,7 +5,7 @@ import ArticleCard from './articleCard';
 export default async function ArticlesPage() {
   const { articles } = await getArticles();
   return (
-    <div className="min-h-screen bg-background dark:bg-background p-6">
+    <div className="min-h-screen p-6">
       <h1 className="text-3xl font-bold text-foreground dark:text-foreground mb-6">
         Articles
       </h1>
