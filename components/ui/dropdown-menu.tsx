@@ -1,5 +1,6 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle, Sun, Moon } from 'lucide-react';
@@ -182,24 +183,11 @@ const DropdownMenuShortcut = ({
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
 
 const DropdownMenuThemeToggle = () => {
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
-
-  React.useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDarkMode = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches;
-
-    const theme = savedTheme ? savedTheme : prefersDarkMode ? 'dark' : 'light';
-    setIsDarkMode(theme === 'dark');
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, []);
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    setTheme(isDark ? 'light' : 'dark');
   };
 
   return (
@@ -209,20 +197,24 @@ const DropdownMenuThemeToggle = () => {
         'hover:bg-accent'
       )}
       onSelect={(e) => {
-        e.preventDefault(); // Prevent dropdown from closing
+        e.preventDefault(); // Hindrer dropdown fra å lukke seg
         toggleTheme();
       }}
     >
-      {isDarkMode ? (
-        <Sun className="mr-2 h-4 w-4" />
+      {isDark ? (
+        <>
+          <Sun className="mr-2 h-4 w-4" />
+          Switch to Light Mode
+        </>
       ) : (
-        <Moon className="mr-2 h-4 w-4" />
+        <>
+          <Moon className="mr-2 h-4 w-4" />
+          Switch to Dark Mode
+        </>
       )}
-      {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     </DropdownMenuPrimitive.Item>
   );
 };
-
 export {
   DropdownMenu,
   DropdownMenuTrigger,

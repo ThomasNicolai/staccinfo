@@ -146,7 +146,7 @@ export default function HomePageClient() {
       {/* Se mer box */}
       <div className="pt-5 pb-20 ">
         <Link
-          href="/articles"
+          href="/products"
           className="flex gap-2 justify-center items-center "
         >
           {/* Should switch link to products page */}

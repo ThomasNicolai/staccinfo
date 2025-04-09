@@ -1,5 +1,5 @@
 import './globals.css';
-
+import { ThemeProvider } from 'next-themes';
 import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
@@ -14,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="flex min-h-screen w-full flex-col">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="flex min-h-screen w-full flex-col">
+        <ThemeProvider attribute="class" defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </body>
       <Analytics />
     </html>
   );

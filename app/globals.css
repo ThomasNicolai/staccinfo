@@ -8,6 +8,9 @@
     --background: 0 0% 100%; /* white */
     --foreground: 220 48% 18%; /* dark blue text */
 
+    --card: 0 0% 100%; /* eller en annen ønsket farge */
+    --card-foreground: 220 48% 18%;
+
     --primary: 229 76% 62%; /* bright blue */
     --primary-foreground: 0 0% 100%; /* white text on primary */
 
@@ -34,6 +37,9 @@
     /* Dark Mode Colors */
     --background: 220 48% 13%; /* deep navy blue */
     --foreground: 0 0% 100%; /* white text */
+
+    --card: 220 48% 13%; /* eksempel for dark mode */
+    --card-foreground: 0 0% 100%;
 
     --primary: 229 76% 62%; /* bright blue */
     --primary-foreground: 0 0% 100%; /* white text on primary */
