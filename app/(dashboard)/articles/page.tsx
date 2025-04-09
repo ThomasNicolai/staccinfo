@@ -12,7 +12,7 @@ export default async function ArticlesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {articles.map((article) => (
           <Link href={`./articles/${article.slug}`} key={article.id}>
-            <ArticleCard article={article} />
+            <ArticleCard article={article} key={article.id} />
           </Link>
         ))}
       </div>

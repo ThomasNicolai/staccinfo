@@ -1,7 +1,8 @@
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
+import { redirect } from 'next/navigation';
 
 export default async function Providers({
   children
@@ -9,20 +10,24 @@ export default async function Providers({
   children: React.ReactNode;
 }) {
   const session = await auth();
+
   if (session?.user) {
-    // TODO: Look into https://react.dev/reference/react/experimental_taintObjectReference
-    // filter out sensitive data before passing to client.
     session.user = {
       name: session.user.name,
       email: session.user.email,
       image: session.user.image
     };
   } else {
-    //redirect('/login');
+    // redirect('/login');
   }
+
   return (
     <TooltipProvider>
-      <SessionProvider session={session}>{children}</SessionProvider>
+      <SessionProvider session={session}>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </SessionProvider>
     </TooltipProvider>
   );
 }

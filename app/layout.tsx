@@ -1,6 +1,7 @@
 import './globals.css';
-import { ThemeProvider } from 'next-themes';
 import { Analytics } from '@vercel/analytics/react';
+// Legg til import av Providers her, om du ønsker å bruke
+// Providers i layout (se neste punkt).
 
 export const metadata = {
   title: 'Next.js App Router + NextAuth + Tailwind CSS',
@@ -15,11 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="flex min-h-screen w-full flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system">
-          {children}
-        </ThemeProvider>
-      </body>
+      <body className="flex min-h-screen w-full flex-col">{children}</body>
       <Analytics />
     </html>
   );
