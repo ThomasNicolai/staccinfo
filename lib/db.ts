@@ -11,7 +11,8 @@ import {
   pgEnum,
   serial,
   boolean,
-  unique
+  unique,
+  varchar
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
@@ -34,8 +35,14 @@ export const suggestions = pgTable('suggestions', {
 // 1. Define the Users table schema
 export const users = pgTable('users', {
   id: serial('user_id').primaryKey(),
-  username: text('username').notNull()
+  role: varchar('role', { length: 255 }).notNull(),
+  username: varchar('username', { length: 255 }).notNull(),
+  created_at: timestamp('created_at').notNull().default(new Date()),
+  full_name: text('full_name').notNull(),
+  github_id: text('github_id').notNull()
 });
+export type SelectUser = typeof users.$inferSelect;
+
 export const userCustomerMap = pgTable('user_customer_map', {
   userId: integer('user_id')
     .notNull()
@@ -183,6 +190,58 @@ export async function getVideo(id: number): Promise<{ video: Video | null }> {
 
   return { video: typedVideo };
 }
+export async function getUserByEmail(
+  email: string
+): Promise<{ user: SelectUser | null }> {
+  const result = await db
+    .select({
+      id: users.id,
+      role: users.role,
+      username: users.username,
+      created_at: users.created_at,
+      full_name: users.full_name,
+      github_id: users.github_id
+    })
+    .from(users)
+    .where(eq(users.github_id, email))
+    .limit(1)
+    .execute();
+
+  if (!result[0]) return { user: null };
+
+  return { user: result[0] };
+}
+type UserDTO = {
+  email: string;
+  role: string;
+  username: string;
+  fullName: string;
+};
+export async function createUser(user: UserDTO): Promise<SelectUser> {
+  const maybeUser = await getUserByEmail(user.email);
+  const reqUser = {
+    full_name: user.fullName,
+    github_id: user.email,
+    role: user.role,
+    username: user.username
+  };
+  if (maybeUser.user) {
+    console.log('user already exists');
+    return maybeUser.user;
+  }
+  try {
+    console.log('Creating user: ', reqUser);
+    await db.insert(users).values(reqUser);
+    const newUser = await getUserByEmail(user.email);
+    if (!newUser.user) {
+      throw new Error('error occurred while inserting user');
+    }
+    return newUser.user;
+  } catch (error) {
+    console.log(error);
+    throw new Error('error occurred while inserting user');
+  }
+}
 
 export async function getArticles(): Promise<{
   articles: Article[];
@@ -224,7 +283,10 @@ export async function getArticle(slug: string): Promise<{
   return { article: dummyArticle1 };
 }
 
-export async function getVideoProgression(userId: number, videoId: number): Promise<VideoProgression | null> {
+export async function getVideoProgression(
+  userId: number,
+  videoId: number
+): Promise<VideoProgression | null> {
   const result = await db.execute(sql`
     SELECT
       video_id,
@@ -249,7 +311,6 @@ export async function getVideoProgression(userId: number, videoId: number): Prom
   }
   return null;
 }
-
 
 // Updated function with tag filtering and sorting AND vote counts
 export async function getSuggestions(tag_name?: string) {
