@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { PlusIcon, ThumbsUp } from 'lucide-react';
@@ -27,15 +26,11 @@ export function SuggestionsClient({
   const [displayedSuggestions, setDisplayedSuggestions] =
     useState(initialSuggestions);
 
-  // Simple handler for tag button clicks
   const handleTagClick = (tag?: string) => {
     setSelectedTag(tag);
-
     if (!tag) {
-      // Show all suggestions when "All" is clicked
       setDisplayedSuggestions(initialSuggestions);
     } else {
-      // Filter suggestions by the selected tag
       setDisplayedSuggestions(
         initialSuggestions.filter((suggestion) => suggestion.tag === tag)
       );
@@ -43,35 +38,33 @@ export function SuggestionsClient({
   };
 
   return (
-    <div className="background min-h-screen p-4 pt-16">
-      {/* Header Container */}
-      <div className="w-1/3 h-48 mt-4 rounded-xl mx-auto p-4 mb-4 bg-white border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-2xl text-center font-bold text-gray-800 dark:text-gray-200">
+    <div className="min-h-screen p-4 pt-16">
+      <div className="w-1/3 h-48 mt-4 rounded-xl mx-auto p-4 mb-4 bg-card dark:bg-card border-b border dark:border-border">
+        <h1 className="text-2xl text-center font-bold text-foreground dark:text-foreground">
           Vi ønsker dine innspill
         </h1>
       </div>
-      
-      {/* Simple Tag Filter Buttons */}
+
       <div className="flex flex-wrap gap-2 justify-center mb-6">
         <button
           onClick={() => handleTagClick(undefined)}
           className={`px-4 py-2 rounded-full ${
             !selectedTag
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground'
+              : 'bg-muted text-muted-foreground hover:bg-muted dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted'
           }`}
         >
           All
         </button>
-        
+
         {allTags.map((tag) => (
           <button
             key={tag}
             onClick={() => handleTagClick(tag)}
             className={`px-4 py-2 rounded-full ${
               selectedTag === tag
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted'
             }`}
           >
             {tag}
@@ -79,18 +72,16 @@ export function SuggestionsClient({
         ))}
       </div>
 
-      {/* Suggestions grid */}
       <div className="flex h-auto space-x-4 mt-6 px-4 flex-wrap">
-        {/* New Suggestion Button */}
         <NewSuggestionButton />
-        
         {displayedSuggestions.map((suggestion) => (
           <SuggestionBox key={suggestion.id} suggestion={suggestion} />
         ))}
-
         {displayedSuggestions.length === 0 && (
           <div className="w-full text-center p-8">
-            <p>No suggestions found with this tag.</p>
+            <p className="text-muted-foreground dark:text-muted-foreground">
+              No suggestions found with this tag.
+            </p>
           </div>
         )}
       </div>

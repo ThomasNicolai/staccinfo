@@ -1,5 +1,4 @@
 'use client';
-
 import { ThumbsUp } from 'lucide-react';
 import { useState } from 'react';
 import { toggleVote } from './actions';
@@ -21,15 +20,11 @@ export function VoteButton({
     setIsLoading(true);
     try {
       const result = await toggleVote(suggestionId);
-
       if (result.success) {
-        // If vote was added, increment count
         if (result.message === 'Vote added') {
           setVoteCount((prev) => prev + 1);
           setUserHasVoted(true);
-        }
-        // If vote was removed, decrement count
-        else if (result.message === 'Vote removed') {
+        } else if (result.message === 'Vote removed') {
           setVoteCount((prev) => prev - 1);
           setUserHasVoted(false);
         }
@@ -47,11 +42,11 @@ export function VoteButton({
       disabled={isLoading}
       className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
         userHasVoted
-          ? 'bg-blue-100 text-blue-800'
-          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-muted text-muted-foreground hover:bg-muted'
       }`}
     >
-      <ThumbsUp className={`h-4 w-4 ${userHasVoted ? 'fill-blue-600' : ''}`} />
+      <ThumbsUp className={`h-4 w-4 ${userHasVoted ? 'fill-primary' : ''}`} />
       <span>{voteCount}</span>
     </button>
   );
