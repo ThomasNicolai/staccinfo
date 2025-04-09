@@ -16,7 +16,7 @@ interface ModuleCardProps {
 
 export function ModuleCard({ module }: ModuleCardProps) {
   return (
-    <div className="relative bg-white border p-4 rounded-[16px] flex flex-col h-full">
+    <div className="relative bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex flex-col h-full">
       {/* Toppseksjon med tittel og statusikon */}
       <div className="flex items-center justify-between mb-6 mt-3">
         <Link href={module.href}>

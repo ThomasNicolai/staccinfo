@@ -14,11 +14,11 @@ const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
     const [message, setMessage] = useState('');
     const [tag, setTag] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
-    
+
     const handleMessageChange = (message: string) => {
       setMessage(message);
     };
-    
+
     const handleSendClick = () => {
       onSend(message, tag, isAnonymous);
       setMessage('');
@@ -30,9 +30,9 @@ const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
       <div ref={ref} className={cn('space-y-4', className)} {...props}>
         {/* Tag input field */}
         <div className="mb-4">
-          <label 
-            htmlFor="tag-input" 
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          <label
+            htmlFor="tag-input"
+            className="block text-sm font-medium text-muted-foreground dark:text-muted-foreground mb-1"
           >
             Tag (required)
           </label>
@@ -42,24 +42,21 @@ const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
             value={tag}
             onChange={(e) => setTag(e.target.value)}
             placeholder="Enter a tag (e.g. 'feature', 'bug', 'improvement')"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
+            className="w-full p-2 border border-input dark:border-input rounded bg-background dark:bg-background text-foreground dark:text-foreground"
           />
         </div>
-        
+
         {/* Message input */}
         <div className="mb-4">
-          <label 
-            htmlFor="suggestion-input" 
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          <label
+            htmlFor="suggestion-input"
+            className="block text-sm font-medium text-muted-foreground dark:text-muted-foreground mb-1"
           >
             Your suggestion (required)
           </label>
-          <WritingBox 
-            onSend={handleMessageChange} 
-            onSubmit={handleSendClick} 
-          />
+          <WritingBox onSend={handleMessageChange} onSubmit={handleSendClick} />
         </div>
-        
+
         {/* Anonymous checkbox */}
         <div className="mb-4 flex items-center">
           <input
@@ -67,21 +64,21 @@ const NewSuggestions = forwardRef<HTMLDivElement, NewSuggestionsProps>(
             type="checkbox"
             checked={isAnonymous}
             onChange={(e) => setIsAnonymous(e.target.checked)}
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-4 w-4 text-primary border-input dark:border-input rounded focus:ring-primary"
           />
           <label
             htmlFor="anonymous-checkbox"
-            className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+            className="ml-2 block text-sm text-muted-foreground dark:text-muted-foreground"
           >
             Submit anonymously
           </label>
         </div>
-        
+
         {/* Submit button */}
         <button
           onClick={handleSendClick}
           disabled={!message.trim() || !tag.trim()}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-primary hover:bg-accent text-primary-foreground py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Submit Suggestion
         </button>

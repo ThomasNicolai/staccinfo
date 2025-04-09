@@ -232,7 +232,7 @@ export default function SharedPageWrapper({
       </div>
 
       {/* Navigationsbaren */}
-      <div className="flex flex-wrap rounded-xl w-full max-w-[1200px] mx-auto bg-white h-14 shadow-lg justify-center md:justify-between">
+      <div className="flex flex-wrap rounded-xl w-full max-w-[1200px] mx-auto bg-background dark:bg-background h-14 shadow-lg justify-center md:justify-between">
         {menuItems.map((item, index) => {
           if (item.href) {
             return (
@@ -241,7 +241,7 @@ export default function SharedPageWrapper({
                 href={item.href}
                 className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
                   activeIndex === index
-                    ? 'bg-[#111625] text-white font-semibold'
+                    ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
                     : 'hover:text-blue-500'
                 }`}
                 onClick={() =>
@@ -267,7 +267,7 @@ export default function SharedPageWrapper({
                 }
                 className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
                   activeIndex === index
-                    ? 'bg-[#111625] text-white font-semibold'
+                    ? 'bg-black dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
                     : 'hover:text-blue-500'
                 }`}
               >
@@ -303,7 +303,7 @@ export default function SharedPageWrapper({
           <div className="w-full max-w-[1200px] flex flex-col gap-4">
             {/* Escalirapporter klikkbar tittel */}
             <div
-              className="bg-white border p-4 rounded-[16px] flex items-center justify-center cursor-pointer"
+              className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex items-center justify-center cursor-pointer"
               onClick={() => setShowEscali(!showEscali)} // Toggle for Escalirapporter
             >
               <h2 className="text-xl font-bold">Escali Financials Rapporter</h2>
@@ -314,7 +314,7 @@ export default function SharedPageWrapper({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px]">
                 {escaliReports.map((report, index) => (
                   <Link key={index} href={report.href}>
-                    <div className="bg-white border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
+                    <div className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
                       {/* Viser tittelen på rapporten */}
                       <span className="text-lg font-bold">{report.title}</span>
                     </div>
@@ -325,7 +325,7 @@ export default function SharedPageWrapper({
 
             {/* Modellrapporter klikkbar tittel  */}
             <div
-              className="bg-white border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
+              className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
               onClick={() => setShowModel(!showModel)} // Toggle for modellrapporter
             >
               <h2 className="text-xl font-bold">Modellrapporter</h2>
@@ -335,7 +335,7 @@ export default function SharedPageWrapper({
                 {modelReports.map((report, index) => (
                   // Hvis du ønsker disse klikkbare, pakk dem også i Link (bruk report.href om tilgjengelig)
                   <Link key={index} href={report.href || '#'}>
-                    <div className="bg-white border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
+                    <div className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
                       <span className="text-lg font-bold">{report.title}</span>
                     </div>
                   </Link>
@@ -345,7 +345,7 @@ export default function SharedPageWrapper({
 
             {/* Rapportpakke klikkbar tittel */}
             <div
-              className="bg-white border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
+              className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
               onClick={() => setShowReportPack(!showReportPack)} // Toggle for rapportpakker
             >
               <h2 className="text-xl font-bold">Rapportpakker</h2>
@@ -356,7 +356,7 @@ export default function SharedPageWrapper({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px]">
                 {reportPack.map((report, index) => (
                   <Link key={index} href={report.href || '#'}>
-                    <div className="bg-white border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
+                    <div className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
                       <span className="text-lg font-bold">{report.title}</span>
                     </div>
                   </Link>
@@ -366,7 +366,7 @@ export default function SharedPageWrapper({
 
             {/* Skreddersydd rapport klikkbar tittel */}
             <div
-              className="bg-white border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
+              className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex items-center justify-center cursor-pointer mt-6"
               onClick={() => setShowTailored(!showTailored)} // Toggle for skreddersydd rapport
             >
               <h2 className="text-xl font-bold">Skreddersydd rapport</h2>
@@ -376,7 +376,7 @@ export default function SharedPageWrapper({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px]">
                 {tailoredReports.map((report, index) => (
                   <Link key={index} href={report.href || '#'}>
-                    <div className="bg-white border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
+                    <div className="bg-card dark:bg-card border dark:border-border p-4 rounded-[16px] flex flex-col h-full items-center justify-center">
                       <span className="text-lg font-bold">{report.title}</span>
                     </div>
                   </Link>

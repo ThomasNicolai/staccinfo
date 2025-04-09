@@ -23,7 +23,9 @@ export default async function SuggestionDetailPage({
 
   if (!suggestionData) {
     return (
-      <div className="p-8">Suggestion with ID {suggestionId} not found.</div>
+      <div className="p-8 bg-background dark:bg-background">
+        Suggestion with ID {suggestionId} not found.
+      </div>
     );
   }
   return (
@@ -31,26 +33,28 @@ export default async function SuggestionDetailPage({
       {/* Back button */}
       <Link
         href="/suggestions"
-        className="inline-block bg-gray-200 text-gray-900 py-2 px-4 rounded hover:bg-gray-800 hover:text-white transition-colors duration-200"
+        className="inline-block bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground py-2 px-4 rounded hover:bg-secondary dark:hover:bg-secondary hover:text-secondary-foreground transition-colors duration-200"
       >
         ← Back to all Suggestions
       </Link>
 
-      <h1 className="text-2xl font-bold mt-6 mb-4">
+      <h1 className="text-2xl font-bold mt-6 mb-4 text-foreground dark:text-foreground">
         Forslag fra {suggestionData.username}
       </h1>
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-card dark:bg-card p-6 rounded-xl shadow-sm border border-muted dark:border-border">
         <div className="flex justify-between items-center mb-4">
-          <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          <span className="inline-block bg-accent dark:bg-accent text-accent-foreground dark:text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">
             {suggestionData.tag}
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground dark:text-muted-foreground">
             Opprettet:{' '}
             {new Date(suggestionData.created_at).toLocaleString('nb-NO')}
           </span>
         </div>
 
-        <p className="text-lg mb-4">{suggestionData.text}</p>
+        <p className="text-lg mb-4 text-foreground dark:text-foreground">
+          {suggestionData.text}
+        </p>
 
         {/* Add vote button */}
         <div className="mt-4">
@@ -61,8 +65,8 @@ export default async function SuggestionDetailPage({
           />
         </div>
 
-        <div className="mt-6 pt-4 border-t border-gray-100">
-          <p className="text-sm text-gray-600">
+        <div className="mt-6 pt-4 border-t border-muted dark:border-border">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             <span className="font-medium">Bruker:</span>{' '}
             {suggestionData.username}
           </p>

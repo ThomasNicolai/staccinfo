@@ -9,7 +9,7 @@ type SuggestionBoxProps = {
     is_anonymous: boolean;
     created_at: Date;
     user_id: number;
-    vote_count?: number; // Add this to the type
+    vote_count?: number;
   };
 };
 
@@ -19,9 +19,19 @@ export function SuggestionBox({ suggestion }: SuggestionBoxProps) {
       href={`/suggestions/${suggestion.id}`}
       className="flex-1 block min-w-[200px] mb-4"
     >
-      <div className="w-full h-full bg-white p-4 border border-gray-200 rounded-xl hover:bg-gray-50">
+      <div
+        className="
+          w-full h-full 
+          bg-green dark:bg-card 
+          p-4 
+          border dark:border-border 
+          rounded-xl 
+          transition-colors duration-200
+          hover:bg-primary active:bg-primary
+        "
+      >
         <p className="font-bold">{suggestion.text}</p>
-        <div className="mt-2 text-sm text-gray-600">
+        <div className="mt-2 text-sm text-muted-foreground">
           {suggestion.is_anonymous ? (
             <p>Posted by: Anonymous</p>
           ) : (
@@ -29,11 +39,9 @@ export function SuggestionBox({ suggestion }: SuggestionBoxProps) {
           )}
           <p>Created: {new Date(suggestion.created_at).toLocaleDateString()}</p>
           <div className="flex justify-between items-center mt-2">
-            <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded">
+            <span className="inline-block bg-accent text-accent-foreground px-2 py-1 rounded">
               {suggestion.tag}
             </span>
-            
-            {/* Vote count display */}
             <div className="flex items-center gap-1">
               <ThumbsUp className="w-4 h-4" />
               <span>{suggestion.vote_count || 0}</span>

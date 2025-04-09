@@ -1,7 +1,8 @@
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
+import { redirect } from 'next/navigation';
 import { createUser, getUserByEmail } from '@/lib/db';
 
 export default async function Providers({
@@ -38,7 +39,11 @@ export default async function Providers({
   };
   return (
     <TooltipProvider>
-      <SessionProvider session={session}>{children}</SessionProvider>
+      <SessionProvider session={session}>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </SessionProvider>
     </TooltipProvider>
   );
 }

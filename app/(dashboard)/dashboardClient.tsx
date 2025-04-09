@@ -24,25 +24,25 @@ export default function HomePageClient({ licences }: { licences: any }) {
 
   return (
     <div className="flex flex-col relative items-center w-full min-h-screen overflow-y-auto overflow-hidden m-0 p-0">
-      {/* Title section */}
-      <div className="flex flex-col items-center pt-10 md:pt-20 px-4">
-        <h1 className="text-3xl md:text-5xl font-bold text-center">
+      {/* Title */}
+      <div className="flex flex-col items-center pt-20">
+        <h1 className="text-5xl font-bold">
           Velkommen tilbake, {session?.user?.name}!
         </h1>
       </div>
 
-      {/* Description section */}
-      <div className="flex flex-col justify-center items-center pb-10 md:pb-20 px-4">
-        <p className="mt-4 text-[14px] md:text-[15px] w-full md:w-[400px] text-center">
+      {/* Description */}
+      <div className="flex flex-col justify-center items-center pb-20">
+        <p className="mt-4 text-[15px] w-[400px]">
           Enkel oversikt over dine moduler og tjenester. Du kan også gi{' '}
           <Link href="/suggestions">
-            <span className="text-[#546bff] hover:text-[#324099] font-medium">
+            <span className="text-primary hover:text-secondary font-medium">
               tilbakemeldinger
             </span>
           </Link>{' '}
           og få{' '}
           <Link href="">
-            <span className="text-[#546bff] hover:text-[#324099] font-medium">
+            <span className="text-primary hover:text-secondary font-medium">
               opplæring
             </span>
           </Link>{' '}
@@ -51,21 +51,21 @@ export default function HomePageClient({ licences }: { licences: any }) {
       </div>
 
       {/* Navigation Bar */}
-      <div className="flex flex-wrap rounded-xl w-full max-w-[1200px] bg-white shadow-lg justify-center md:justify-between overflow-x-auto">
+      <div className="flex flex-wrap rounded-xl w-full max-w-[1200px] mx-auto bg-background dark:bg-background h-14 shadow-lg justify-center md:justify-between">
         {menuItems.map((item, index) => (
           <span
             key={index}
-            className={`cursor-pointer transition-colors duration-200 py-2 px-2 whitespace-nowrap md:px-4 gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
+            onClick={() => setActiveIndex(index)}
+            className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
               activeIndex === index
-                ? 'bg-[#111625] text-white font-semibold'
+                ? 'bg-black dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
                 : 'hover:text-blue-500'
             }`}
-            onClick={() => setActiveIndex(index)}
           >
             <img
               src={item.icon}
               alt={`${item.label} icon`}
-              className={`w-5 h-5 mr-1 transition duration-200 ${
+              className={`w-5 h-5 transition duration-200 ${
                 activeIndex === index ? 'invert brightness-200' : ''
               }`}
             />
@@ -75,40 +75,39 @@ export default function HomePageClient({ licences }: { licences: any }) {
       </div>
 
       {/* Description Box */}
-      <div className="mt-4 w-full max-w-[1200px] px-4 h-auto md:h-[240px] flex flex-col justify-center items-center pt-7">
+      <div className="mt-4 w-[1200px] h-[240px] flex flex-col justify-center items-center pt-7">
         {activeIndex !== null ? (
           <p>{menuItems[activeIndex].description}</p>
         ) : (
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Velg en kategori for å se mer informasjon.
           </p>
         )}
 
         {/* Show extra divs when 'Moduler' is selected */}
         {activeIndex === 0 && (
-          <div className="flex flex-col md:flex-row justify-center w-full h-auto md:h-[220px] gap-3 px-4">
-            {/* Should show the three first, based on user */}
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col  ">
+          <div className="flex justify-center w-full h-[220px] gap-3">
+            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
               <Link href="/suggestions">
-                <span className="hover:text-[#324099] font-bold">
+                <span className="hover:text-secondary font-bold">
                   Aksjer og fond
                 </span>
               </Link>
               <p>Legge til funksjonalitet her</p>
             </div>
 
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col ">
+            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
               <Link href="/suggestions">
-                <span className="hover:text-[#324099] font-bold">
+                <span className="hover:text-secondary font-bold">
                   Eksempel 2
                 </span>
               </Link>
               <p>Legge til funksjonalitet her</p>
             </div>
 
-            <div className="bg-white border border p-4 rounded-[16px] w-full h-full flex flex-col ">
+            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
               <Link href="/suggestions">
-                <span className="hover:text-[#324099] font-bold">
+                <span className="hover:text-secondary font-bold">
                   Eksempel 3
                 </span>
               </Link>
@@ -119,20 +118,19 @@ export default function HomePageClient({ licences }: { licences: any }) {
 
         {/* Show extra divs when 'Rapporter' is selected */}
         {activeIndex === 1 && (
-          <div className="flex flex-col md:flex-row justify-center w-full h-auto md:h-[220px] gap-3 px-4">
-            {/* Should show the three first, based on user */}
-            <div className="bg-white border border p-4 rounded-[16px] w-[350px] h-full flex flex-col  ">
+          <div className="flex justify-center w-full h-[220px] gap-3">
+            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-[350px] h-full flex flex-col">
               <Link href="/suggestions">
-                <span className="hover:text-[#324099] font-bold">
+                <span className="hover:text-secondary font-bold">
                   Rapport 1
                 </span>
               </Link>
               <p>Legge til funksjonalitet her</p>
             </div>
 
-            <div className="bg-white border border p-4 rounded-[16px] w-[350px] h-full flex flex-col ">
+            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-[350px] h-full flex flex-col">
               <Link href="/suggestions">
-                <span className="hover:text-[#324099] font-bold">
+                <span className="hover:text-secondary font-bold">
                   Rapport 2
                 </span>
               </Link>
@@ -142,16 +140,14 @@ export default function HomePageClient({ licences }: { licences: any }) {
         )}
       </div>
 
-      {/* Se mer box */}
-      <div className="pt-5 pb-20 ">
+      {/* 'Se mer' box */}
+      <div className="pt-5 pb-20">
         <Link
-          href="/articles"
-          className="flex gap-2 justify-center items-center "
+          href="/products"
+          className="flex gap-2 justify-center items-center"
         >
-          {/* Should switch link to products page */}
-          <span className="text-[#546bff] hover:text-[#324099] font-medium">
-            {' '}
-            Se mer{' '}
+          <span className="text-primary hover:text-secondary font-medium">
+            Se mer
           </span>
           <img src="/right-arrow.png" alt="Arrow" className="w-4 h-4" />
         </Link>
@@ -160,14 +156,13 @@ export default function HomePageClient({ licences }: { licences: any }) {
       {/* New box */}
       <div className="flex flex-col items-center pb-15 gap-2">
         <h2 className="text-2xl font-bold">Vi hjelper deg gjerne</h2>
-        <p> Har du spørsmål eller trenger veiledning?</p>
+        <p>Har du spørsmål eller trenger veiledning?</p>
       </div>
 
       {/* Container of shortcuts */}
       <div className="flex justify-center items-center gap-4 p-10">
-        {/* First Circle with Image */}
         <Link href="/">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/Modules.png"
               alt="First Icon"
@@ -176,39 +171,38 @@ export default function HomePageClient({ licences }: { licences: any }) {
           </div>
         </Link>
 
-        {/* Second Circle with Image */}
         <Link href="/suggestions">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden  flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/paper.png"
               alt="Second Icon"
-              className="w-10 brightness-124 object-cover"
+              className="w-10 object-cover brightness-125"
             />
           </div>
         </Link>
       </div>
 
-      {/* FAQ and videos */}
-      <div className="w-full max-w-[700px] flex flex-col md:flex-row gap-3 pb-[20px] mb-[15px] px-4">
-        <div className="bg-white shadow-xl p-4 md:p-6 rounded-[16px] w-full h-full flex flex-col">
+      {/* FAQ and Videos */}
+      <div className="w-[700px] h-[235px] flex gap-3 pb-[20px] mb-[15px]">
+        <div className="bg-card shadow-xl p-6 rounded-[16px] w-full h-full flex flex-col">
           <Link href="/videos">
-            <p className="text-xl md:text-[25px] font-semibold"> Videoer </p>
-            <p className="text-sm md:text-base"> Endre font på dette elementet </p>
+            <p className="text-[25px] font-semibold">Videoer</p>
+            <p>Endre font på dette elementet</p>
           </Link>
         </div>
 
-        <div className="bg-white shadow-xl p-4 rounded-[16px] w-full h-full flex flex-col">
+        <div className="bg-card shadow-xl p-4 rounded-[16px] w-full h-full flex flex-col">
           <Link href="/videos">
-            <p className="text-xl md:text-[25px] font-semibold"> FAQs </p>
-            <p className="text-sm md:text-base"> Endre font på dette elementet </p>
+            <p className="text-[25px] font-semibold">FAQs</p>
+            <p>Endre font på dette elementet</p>
           </Link>
         </div>
       </div>
 
       {/* Snarveier */}
-      <div className="hidden md:flex w-full max-w-[700px] h-[230px] bg-white shadow-xl rounded-[16px] justify-center items-center gap-16 mb-[70px] mx-4">
+      <div className="w-[700px] h-[230px] bg-card shadow-xl rounded-[16px] flex justify-center items-center gap-16 mb-[70px]">
         <Link href="/">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/Modules.png"
               alt="First Icon"
@@ -217,19 +211,18 @@ export default function HomePageClient({ licences }: { licences: any }) {
           </div>
         </Link>
 
-        {/* Second Circle with Image */}
         <Link href="/suggestions">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden  flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/paper.png"
               alt="Second Icon"
-              className="w-10 brightness-124 object-cover"
+              className="w-10 object-cover brightness-125"
             />
           </div>
         </Link>
 
         <Link href="/">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/Modules.png"
               alt="First Icon"
@@ -238,13 +231,12 @@ export default function HomePageClient({ licences }: { licences: any }) {
           </div>
         </Link>
 
-        {/* Second Circle with Image */}
         <Link href="/suggestions">
-          <div className="w-20 h-20 bg-[#627afa] rounded-full overflow-hidden  flex items-center justify-center">
+          <div className="w-20 h-20 bg-primary rounded-full overflow-hidden flex items-center justify-center">
             <img
               src="/paper.png"
               alt="Second Icon"
-              className="w-10 brightness-124 object-cover"
+              className="w-10 object-cover brightness-125"
             />
           </div>
         </Link>
@@ -252,12 +244,11 @@ export default function HomePageClient({ licences }: { licences: any }) {
 
       <div className="flex flex-col items-center pb-15 gap-2">
         <h2 className="text-2xl font-bold">Supportcase</h2>
-        <p> Har du spørsmål eller trenger veiledning?</p>
+        <p>Har du spørsmål eller trenger veiledning?</p>
       </div>
 
-      {/* Support cases */}
-      <div className="flex flex-col md:flex-row justify-center items-center gap-4 p-4 md:p-10">
-        {/* First case with Image */}
+      {/* Support Cases */}
+      <div className="flex justify-center items-center gap-4 p-10">
         <Link href="/">
           <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
             <img
@@ -265,38 +256,11 @@ export default function HomePageClient({ licences }: { licences: any }) {
               alt="First Icon"
               className="w-20 object-cover"
             />
-
-            <p className="font-bold text-xl text-[#111625]">Case</p>
+            <p className="font-bold text-xl text-svart">Case</p>
             <p className="text-center">
               Lörem ipsum bilmålvakt intramis, de kronera, av plat
             </p>
-
-            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
-              <span className="align-middle">Les</span>
-              <img
-                src="/arrow_short.png"
-                alt="Arrow Icon"
-                className="w-3 h-3 relative top-[1px] contrast-150"
-              />
-            </div>
-          </div>
-        </Link>
-
-        {/* Second case with Image */}
-        <Link href="/">
-          <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
-            <img
-              src="/Case.png"
-              alt="First Icon"
-              className="w-20 object-cover"
-            />
-
-            <p className="font-bold text-xl text-[#111625]">Case</p>
-            <p className="text-center">
-              Lörem ipsum bilmålvakt intramis, de kronera, av plat
-            </p>
-
-            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
+            <div className="flex items-center justify-center text-primary hover:text-secondary gap-1">
               <span className="align-middle">Les</span>
               <img
                 src="/arrow_short.png"
@@ -314,13 +278,33 @@ export default function HomePageClient({ licences }: { licences: any }) {
               alt="First Icon"
               className="w-20 object-cover"
             />
-
-            <p className="font-bold text-xl text-[#111625]">Case</p>
+            <p className="font-bold text-xl text-svart">Case</p>
             <p className="text-center">
               Lörem ipsum bilmålvakt intramis, de kronera, av plat
             </p>
+            <div className="flex items-center justify-center text-primary hover:text-secondary gap-1">
+              <span className="align-middle">Les</span>
+              <img
+                src="/arrow_short.png"
+                alt="Arrow Icon"
+                className="w-3 h-3 relative top-[1px] contrast-150"
+              />
+            </div>
+          </div>
+        </Link>
 
-            <div className="flex items-center justify-center text-[#546bff] hover:text-[#324099] gap-1 ">
+        <Link href="/">
+          <div className="max-w-[200px] overflow-hidden flex flex-col items-center justify-center gap-4">
+            <img
+              src="/Case.png"
+              alt="First Icon"
+              className="w-20 object-cover"
+            />
+            <p className="font-bold text-xl text-svart">Case</p>
+            <p className="text-center">
+              Lörem ipsum bilmålvakt intramis, de kronera, av plat
+            </p>
+            <div className="flex items-center justify-center text-primary hover:text-secondary gap-1">
               <span className="align-middle">Les</span>
               <img
                 src="/arrow_short.png"

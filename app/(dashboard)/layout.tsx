@@ -1,5 +1,4 @@
 import Link from 'next/link';
-
 import {
   Home,
   PanelLeft,
@@ -11,14 +10,6 @@ import {
   MessageSquareText
 } from 'lucide-react';
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
@@ -42,10 +33,9 @@ export default function DashboardLayout({
     <Providers>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
         <DesktopNav />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-[#E8EAF9] dark:bg-[#E8EAF9] px-4  sm:h-auto sm:border-0 sm:px-6">
+        <div className="flex flex-col sm:pl-14">
+          <header className="sticky top-0 z-30 flex h-16 md:h-16 items-center gap-4 border-b bg-background dark:bg-background px-4 sm:px-6 shadow-sm">
             <MobileNav />
-            <DashboardBreadcrumb />
             <SearchInput />
             <User />
           </header>
@@ -155,29 +145,5 @@ function MobileNav() {
         </nav>
       </SheetContent>
     </Sheet>
-  );
-}
-
-function DashboardBreadcrumb() {
-  return (
-    <Breadcrumb className="hidden md:flex">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="/">Dashboard</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="/products">Products</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>All Products</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
   );
 }
