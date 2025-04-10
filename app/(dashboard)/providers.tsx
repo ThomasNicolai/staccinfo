@@ -3,7 +3,10 @@ import { auth } from '@/lib/auth';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from 'next-themes';
 import { redirect } from 'next/navigation';
-import { createUser, getUserByEmail } from '@/lib/db';
+import { createUser, getUserByEmail, SelectUser } from '@/lib/db';
+import UserContext from './userContext';
+import { getActiveLicenses } from '@/lib/queries';
+import LicensesContext from './licensesContext';
 
 export default async function Providers({
   children
@@ -11,6 +14,7 @@ export default async function Providers({
   children: React.ReactNode;
 }) {
   const session = await auth();
+
   if (!session) {
     redirect('/login');
   }
@@ -29,6 +33,16 @@ export default async function Providers({
       username: session.user.name
     });
   }
+  if (!userData.user.stacc_customer_seq) {
+    // Should be changed to redirect(/you-lack-permission)
+    redirect('/login');
+  }
+  const licences = (await getActiveLicenses(userData.user.stacc_customer_seq))
+    .result;
+  if (!licences) {
+    redirect('/login');
+  }
+  console.log('Found licences in stacc database: ', licences);
   console.log('Found userData in database: ', userData);
   // TODO: Look into https://react.dev/reference/react/experimental_taintObjectReference
   // filter out sensitive data before passing to client.
@@ -41,7 +55,11 @@ export default async function Providers({
     <TooltipProvider>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="system">
-          {children}
+          <UserContext user={userData.user}>
+            <LicensesContext licenses={licences.recordset}>
+              {children}
+            </LicensesContext>
+          </UserContext>
         </ThemeProvider>
       </SessionProvider>
     </TooltipProvider>

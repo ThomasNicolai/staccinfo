@@ -39,7 +39,8 @@ export const users = pgTable('users', {
   username: varchar('username', { length: 255 }).notNull(),
   created_at: timestamp('created_at').notNull().default(new Date()),
   full_name: text('full_name').notNull(),
-  github_id: text('github_id').notNull()
+  github_id: text('github_id').notNull(),
+  stacc_customer_seq: integer('stacc_customer_seq')
 });
 export type SelectUser = typeof users.$inferSelect;
 
@@ -200,7 +201,8 @@ export async function getUserByEmail(
       username: users.username,
       created_at: users.created_at,
       full_name: users.full_name,
-      github_id: users.github_id
+      github_id: users.github_id,
+      stacc_customer_seq: users.stacc_customer_seq
     })
     .from(users)
     .where(eq(users.github_id, email))
