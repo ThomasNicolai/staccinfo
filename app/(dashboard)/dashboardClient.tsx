@@ -1,11 +1,17 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { UserContext } from './userContext';
+import { LicensesContext } from './licensesContext';
 
-export default function HomePageClient({ licences }: { licences: any }) {
+export default function HomePageClient() {
+  const userData = useContext(UserContext);
+  console.log(userData);
+  const licences = useContext(LicensesContext);
   console.log(licences);
   const { data: session } = useSession();
+
   const [activeIndex, setActiveIndex] = useState(0);
   const menuItems = [
     { label: 'Moduler', icon: 'Modules.png' },
