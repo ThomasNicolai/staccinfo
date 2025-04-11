@@ -119,6 +119,7 @@ export type Article = {
   slug: string;
   title: string;
   content: string;
+  tag: string[] | string;
 };
 
 export type Comment = {
@@ -192,21 +193,24 @@ export async function getArticles(): Promise<{
     slug: 'kom-i-gang-med-obligasjoner',
     title: 'Kom i gang med obligasjoner',
     content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>'
+      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
+    tag: 'obligasjoner',
   };
   const dummyArticle2: Article = {
     id: '2',
     slug: 'kom-i-gang-med-obligasjoner',
     title: 'Kom i gang med obligasjoner',
     content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>'
+      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
+      tag: 'obligasjoner',
   };
   const dummyArticle3: Article = {
     id: '3',
     slug: 'kom-i-gang-med-obligasjoner',
     title: 'Kom i gang med obligasjoner',
     content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>'
+      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
+    tag: 'obligasjoner',
   };
   const dummyVideos = [dummyArticle1, dummyArticle2, dummyArticle3];
   return { articles: dummyVideos };
@@ -219,7 +223,8 @@ export async function getArticle(slug: string): Promise<{
     slug: 'kom-i-gang-med-obligasjoner',
     title: 'Kom i gang med obligasjoner',
     content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>'
+      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
+    tag: 'obligasjoner',
   };
   return { article: dummyArticle1 };
 }

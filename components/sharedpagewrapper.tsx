@@ -30,10 +30,18 @@ export default function SharedPageWrapper({
 
   // Definer nagivasjonselementene. Ingen href foreløpig, fungerer som ulike faner.
   const menuItems: MenuItem[] = [
-    { label: 'Moduler', icon: '/Modules.png' },
-    { label: 'Rapporter', icon: '/Reports.png' },
-    { label: 'Ekstra funksjonalitet', icon: '/Wand.png' },
-    { label: 'Andre tjenester', icon: '/Service.png' }
+    { label: 'Moduler', icon: '/Modules.png', href: '/products' },
+    { label: 'Rapporter', icon: '/Reports.png', href: '/products' },
+    {
+      label: 'Ekstra funksjonalitet',
+      icon: '/Wand.png',
+      href: '/products'
+    },
+    {
+      label: 'Andre tjenester',
+      icon: '/Service.png',
+      href: '/products'
+    }
   ];
 
   // Array med alle mulige moduler
