@@ -7,14 +7,12 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { auth } from '@/lib/auth';
 import Link from 'next/link';
 
-// For testing purposes - this version doesn't require auth
 export default async function NoPermissionsPage() {
-  // Comment out auth for testing
-  // const session = await auth();
-  // const userName = session?.user?.name || 'User';
-  const userName = 'User'; // Hardcoded for testing
+  const session = await auth();
+  const userName = session?.user?.name || 'User';
   
   return (
     <div className="relative min-h-screen flex justify-center items-start md:items-center p-8 bg-[#e8eaf9] overflow-hidden">
