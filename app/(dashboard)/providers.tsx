@@ -35,7 +35,7 @@ export default async function Providers({
   }
   if (!userData.user.stacc_customer_seq) {
     // Should be changed to redirect(/you-lack-permission)
-    redirect('/login');
+    redirect('/no_permissions');
   }
   const licences = (await getActiveLicenses(userData.user.stacc_customer_seq))
     .result;
