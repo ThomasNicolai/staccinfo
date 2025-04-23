@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ArticleCard from './articleCard';
-import { ArticleToolbar } from './articleToolbar';
+import { ArticleNavigation } from './articleNavigation';
 import { getArticlesAction } from './actions';
 
 type Article = {
@@ -20,19 +20,16 @@ export default function ArticlesPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
 
-  // Helper function to normalize tag data
   const normalizeTags = (tag: string[] | string | undefined): string[] => {
     if (!tag) return [];
     if (Array.isArray(tag)) return tag;
-    return [tag]; // Convert single string to array
+    return [tag];
   };
 
-  // Fetch articles on component mount
   useEffect(() => {
     async function fetchArticles() {
       const { articles: fetchedArticles } = await getArticlesAction();
 
-      // Extract unique categories from articles
       const uniqueCategories = Array.from(
         new Set(
           fetchedArticles.flatMap((article) => normalizeTags(article.tag))
@@ -66,7 +63,7 @@ export default function ArticlesPage() {
     <div className="p-4 h-full min-h-[calc(100vh-4rem)]">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-2">
-          Knowledge Center
+          Articles
         </h1>
         <p className="text-lg text-gray-600 max-w-3xl">
           Explore our collection of articles covering various financial topics
@@ -74,7 +71,7 @@ export default function ArticlesPage() {
         </p>
       </div>
 
-      <ArticleToolbar
+      <ArticleNavigation
         categories={categories}
         activeCategory={activeCategory}
         onCategoryChangeAction={handleCategoryChange}
