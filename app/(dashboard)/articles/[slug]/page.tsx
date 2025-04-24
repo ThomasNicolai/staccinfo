@@ -35,7 +35,12 @@ export default async function ArticlePage({
   let displayContent = '';
 
   if (isVml) {
-    // VML content needs special handling
+    let cleanedContent = article.content;
+
+    cleanedContent = cleanedContent.trim();
+    cleanedContent = cleanedContent.replace(/^(\s*\r?\n\s*)+/g, '');
+    cleanedContent = cleanedContent.replace(/(\s*\r?\n\s*)+$/g, '');
+    cleanedContent = cleanedContent.replace(/(\r?\n\s*){3,}/g, '\n\n');
     displayContent = `
       <!DOCTYPE html>
       <html>
