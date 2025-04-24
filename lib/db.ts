@@ -16,6 +16,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
+import { getAllArticles } from './queries';
 // console.log('POSTGRES_URL:', process.env.POSTGRES_URL);
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
@@ -249,46 +250,49 @@ export async function createUser(user: UserDTO): Promise<SelectUser> {
 export async function getArticles(): Promise<{
   articles: Article[];
 }> {
-  const dummyArticle1: Article = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    title: 'Kom i gang med obligasjoner',
-    content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
-    tag: 'obligasjoner',
-  };
-  const dummyArticle2: Article = {
-    id: '2',
-    slug: 'kom-i-gang-med-obligasjoner',
-    title: 'Kom i gang med obligasjoner',
-    content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
-      tag: 'obligasjoner',
-  };
-  const dummyArticle3: Article = {
-    id: '3',
-    slug: 'kom-i-gang-med-obligasjoner',
-    title: 'Kom i gang med obligasjoner',
-    content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
-    tag: 'obligasjoner',
-  };
-  const dummyVideos = [dummyArticle1, dummyArticle2, dummyArticle3];
-  return { articles: dummyVideos };
+  try {
+    const allArticles = await getAllArticles();
+    if (!allArticles.result) {
+      throw new Error('error occurred while inserting user');
+    }
+    console.log('all articles: ', allArticles.result.recordset);
+    const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
+      return {
+        id: a.DescriptionSeq,
+        content: a.HTML,
+        slug: a.Description,
+        title: a.Description
+      };
+    });
+    return { articles: mappedArticles };
+  } catch (error) {
+    console.log(error);
+    throw new Error('error occurred while inserting user');
+  }
 }
-export async function getArticle(slug: string): Promise<{
-  article: Article;
-}> {
-  const dummyArticle1: Article = {
-    id: '1',
-    slug: 'kom-i-gang-med-obligasjoner',
-    title: 'Kom i gang med obligasjoner',
-    content:
-      '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Hello, world!</title> <meta name="viewport" content="width=device-width,initial-scale=1" /> <meta name="description" content="" /> <link rel="icon" href="favicon.png"> </head> <body> <h1>Hello, world!</h1> </body> </html>',
-    tag: 'obligasjoner',
-  };
-  return { article: dummyArticle1 };
-}
+// export async function getArticle(slug: string): Promise<{
+//   article: Article;
+// }> {
+//   try {
+//     const allArticles = await getArticles();
+//     if (!allArticles.result) {
+//       throw new Error('error occurred while inserting user');
+//     }
+//     console.log('all articles: ', allArticles.result.recordset);
+//     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
+//       return {
+//         id: a.DescriptionSeq,
+//         content: a.HTML,
+//         slug: a.Description,
+//         title: a.Description
+//       };
+//     });
+//     return { article: mappedArticles };
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error('error occurred while inserting user');
+//   }
+// }
 
 export async function getVideoProgression(
   userId: number,

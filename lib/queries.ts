@@ -45,6 +45,39 @@ export async function getActiveLicenses(customerSeq: number) {
     return { error: 'Failed to fetch articles', details: error.message };
   }
 }
+export async function getAllArticles() {
+  try {
+    const pool = await getDBConnection();
+    const result = await pool.request().query(`
+       SELECT 
+         *
+       FROM "descriptions"
+    `);
+
+    return { result };
+  } catch (error: any) {
+    console.error('❌ Error fetching articles:', error.message);
+    return { error: 'Failed to fetch articles', details: error.message };
+  }
+}
+export async function getArticle(descriptionSeq: number) {
+  try {
+    const pool = await getDBConnection();
+    const result = await pool.request().input('descriptionSeq', descriptionSeq)
+      .query(`
+       SELECT 
+         *
+       FROM "descriptions"
+       WHERE 
+         "DescriptionSeq" = ${descriptionSeq};
+    `);
+
+    return { result };
+  } catch (error: any) {
+    console.error('❌ Error fetching articles:', error.message);
+    return { error: 'Failed to fetch articles', details: error.message };
+  }
+}
 // const staccDB = drizzle(neon(process.env.STACC_URL!, { readOnly: true, fetchOptions: {
 
 // } }));
