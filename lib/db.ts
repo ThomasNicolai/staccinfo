@@ -128,7 +128,6 @@ export type Article = {
   slug: string;
   title: string;
   content: string;
-  tag: string[] | string;
 };
 
 export type Comment = {
@@ -253,46 +252,76 @@ export async function getArticles(): Promise<{
   try {
     const allArticles = await getAllArticles();
     if (!allArticles.result) {
-      throw new Error('error occurred while inserting user');
+      console.log('No articles found in database');
+      return { articles: [] };
     }
-    console.log('all articles: ', allArticles.result.recordset);
+    
     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
       return {
         id: a.DescriptionSeq,
-        content: a.HTML,
         slug: a.Description,
-        title: a.Description
+        title: a.Description,
+        content: a.HTML
       };
     });
+    
     return { articles: mappedArticles };
   } catch (error) {
-    console.log(error);
-    throw new Error('error occurred while inserting user');
+    console.error('Error fetching articles:', error);
+    return { articles: [] };
   }
 }
-// export async function getArticle(slug: string): Promise<{
-//   article: Article;
-// }> {
-//   try {
-//     const allArticles = await getArticles();
-//     if (!allArticles.result) {
-//       throw new Error('error occurred while inserting user');
-//     }
-//     console.log('all articles: ', allArticles.result.recordset);
-//     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
-//       return {
-//         id: a.DescriptionSeq,
-//         content: a.HTML,
-//         slug: a.Description,
-//         title: a.Description
-//       };
-//     });
-//     return { article: mappedArticles };
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error('error occurred while inserting user');
-//   }
-// }
+
+export async function getArticle(slug: string): Promise<{
+  article: Article | null;
+}> {
+  try {
+    const allArticles = await getAllArticles();
+    if (!allArticles.result) {
+      console.log('No articles found in database');
+      return { article: null };
+    }
+    
+    console.log('Looking for article with slug:', slug);
+    
+    // Try different matching approaches
+    let article = allArticles.result.recordset.find((a) => 
+      a.Description === slug
+    );
+    
+    // If not found, try with decoded slug (in case it was encoded twice)
+    if (!article) {
+      article = allArticles.result.recordset.find((a) => 
+        a.Description === decodeURIComponent(slug)
+      );
+    }
+    
+    // If still not found, try case-insensitive comparison
+    if (!article) {
+      article = allArticles.result.recordset.find((a) => 
+        a.Description.toLowerCase() === slug.toLowerCase()
+      );
+    }
+    
+    if (!article) {
+      console.log('Article not found for slug:', slug);
+      console.log('Available articles:', allArticles.result.recordset.map(a => a.Description));
+      return { article: null };
+    }
+    
+    return { 
+      article: {
+        id: article.DescriptionSeq,
+        slug: article.Description,
+        title: article.Description,
+        content: article.HTML
+      } 
+    };
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return { article: null };
+  }
+}
 
 export async function getVideoProgression(
   userId: number,

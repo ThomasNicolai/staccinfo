@@ -1,88 +1,52 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React from 'react';
+import { getArticles } from '@/lib/db';
 import ArticleCard from './articleCard';
-import { ArticleNavigation } from './articleNavigation';
-import { getArticlesAction } from './actions';
 
-type Article = {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  tag: string[] | string;
-};
-
-export default function ArticlesPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-
-  const normalizeTags = (tag: string[] | string | undefined): string[] => {
-    if (!tag) return [];
-    if (Array.isArray(tag)) return tag;
-    return [tag];
-  };
-
-  useEffect(() => {
-    async function fetchArticles() {
-      const { articles: fetchedArticles } = await getArticlesAction();
-
-      const uniqueCategories = Array.from(
-        new Set(
-          fetchedArticles.flatMap((article) => normalizeTags(article.tag))
-        )
-      );
-
-      setArticles(fetchedArticles);
-      setFilteredArticles(fetchedArticles);
-      setCategories(uniqueCategories);
-    }
-
-    fetchArticles();
-  }, []);
-
-  const handleCategoryChange = (category: string | null) => {
-    setActiveCategory(category);
-
-    if (category === null) {
-      setFilteredArticles(articles);
-    } else {
-      setFilteredArticles(
-        articles.filter((article) => {
-          const tags = normalizeTags(article.tag);
-          return tags.includes(category);
-        })
-      );
-    }
-  };
+export default async function ArticlesPage() {
+  const { articles } = await getArticles();
 
   return (
-    <div className="p-4 h-full min-h-[calc(100vh-4rem)]">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-2">
-          Articles
-        </h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
-          Explore our collection of articles covering various financial topics
-          to help you make informed decisions.
-        </p>
+    <div className="min-h-screen">
+      {/* Decorative circle in background */}
+      <div className="absolute top-[-65px] left-[-170px] w-[390px] h-[390px] rounded-full transform translate-x-1 translate-y-1/3 bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(var(--secondary))] p-[55px] pointer-events-none z-[-1]">
+        <div className="w-full h-full rounded-full bg-background dark:bg-background"></div>
       </div>
 
-      <ArticleNavigation
-        categories={categories}
-        activeCategory={activeCategory}
-        onCategoryChangeAction={handleCategoryChange}
-      />
+      {/* Header section */}
+      <div className="relative z-10 pt-6 px-6">
+        <div className="w-full max-w-[1200px] mx-auto">
+          <div className="flex flex-col items-center pt-10">
+            <h1 className="text-7xl font-bold">Artikler</h1>
+          </div>
 
-      <div className="flex flex-row flex-wrap gap-4 mt-6">
-        {filteredArticles.map((article) => (
-          <Link href={`/articles/${article.slug}`} key={article.id}>
-            <ArticleCard article={article} />
-          </Link>
-        ))}
+          <div className="flex flex-col justify-center items-center pb-10">
+            <p className="mt-4 text-[15px] text-center max-w-xl pt-3">
+              Her finner du nyttige artikler og veiledninger om våre produkter
+              og tjenester.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Articles grid */}
+      <div className="mt-10 w-full flex justify-center pb-20 relative z-10">
+        <div className="w-full max-w-[1200px] px-6">
+          {articles.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {articles.map((article) => (
+                <div key={article.id} className="h-full">
+                  <ArticleCard article={article} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <h2 className="text-xl font-medium text-muted-foreground">
+                Ingen artikler funnet
+              </h2>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
