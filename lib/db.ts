@@ -16,7 +16,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getAllArticles } from './queries';
+import { getAllArticles, getArticleFromStacc } from './queries';
 // console.log('POSTGRES_URL:', process.env.POSTGRES_URL);
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
@@ -255,7 +255,7 @@ export async function getArticles(): Promise<{
       console.log('No articles found in database');
       return { articles: [] };
     }
-    
+
     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
       return {
         id: a.DescriptionSeq,
@@ -264,7 +264,7 @@ export async function getArticles(): Promise<{
         content: a.HTML
       };
     });
-    
+
     return { articles: mappedArticles };
   } catch (error) {
     console.error('Error fetching articles:', error);
@@ -272,50 +272,24 @@ export async function getArticles(): Promise<{
   }
 }
 
-export async function getArticle(slug: string): Promise<{
+export async function getArticle(id: number): Promise<{
   article: Article | null;
 }> {
   try {
-    const allArticles = await getAllArticles();
-    if (!allArticles.result) {
-      console.log('No articles found in database');
+    const maybeArticle = await getArticleFromStacc(id);
+    if (!maybeArticle.result) {
+      console.log('No articles found in database with id: ', id);
       return { article: null };
     }
-    
-    console.log('Looking for article with slug:', slug);
-    
-    // Try different matching approaches
-    let article = allArticles.result.recordset.find((a) => 
-      a.Description === slug
-    );
-    
-    // If not found, try with decoded slug (in case it was encoded twice)
-    if (!article) {
-      article = allArticles.result.recordset.find((a) => 
-        a.Description === decodeURIComponent(slug)
-      );
-    }
-    
-    // If still not found, try case-insensitive comparison
-    if (!article) {
-      article = allArticles.result.recordset.find((a) => 
-        a.Description.toLowerCase() === slug.toLowerCase()
-      );
-    }
-    
-    if (!article) {
-      console.log('Article not found for slug:', slug);
-      console.log('Available articles:', allArticles.result.recordset.map(a => a.Description));
-      return { article: null };
-    }
-    
-    return { 
+    const articleResponse = maybeArticle.result.recordset[0];
+    console.log(articleResponse);
+    return {
       article: {
-        id: article.DescriptionSeq,
-        slug: article.Description,
-        title: article.Description,
-        content: article.HTML
-      } 
+        id: articleResponse.DescriptionSeq,
+        slug: articleResponse.Description,
+        title: articleResponse.Description,
+        content: articleResponse.HTML
+      }
     };
   } catch (error) {
     console.error('Error fetching article:', error);

@@ -63,7 +63,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
   const textPreview = getTextPreview(article.content);
 
   return (
-    <Link href={`/articles/${encodeURIComponent(article.slug)}`}>
+    <Link href={`/articles/${encodeURIComponent(article.id)}`}>
       <div className="bg-card dark:bg-card border dark:border-border p-6 rounded-xl shadow-md hover:shadow-lg transition-all h-full flex flex-col justify-between">
         <div>
           <h3 className="text-xl font-bold mb-2 text-foreground">
