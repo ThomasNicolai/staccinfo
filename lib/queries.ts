@@ -60,7 +60,7 @@ export async function getAllArticles() {
     return { error: 'Failed to fetch articles', details: error.message };
   }
 }
-export async function getArticle(descriptionSeq: number) {
+export async function getArticleFromStacc(descriptionSeq: number) {
   try {
     const pool = await getDBConnection();
     const result = await pool.request().input('descriptionSeq', descriptionSeq)

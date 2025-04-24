@@ -16,7 +16,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { count, eq, ilike, desc, asc, and, sql } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { getAllArticles } from './queries';
+import { getAllArticles, getArticleFromStacc } from './queries';
 // console.log('POSTGRES_URL:', process.env.POSTGRES_URL);
 
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
@@ -252,46 +252,50 @@ export async function getArticles(): Promise<{
   try {
     const allArticles = await getAllArticles();
     if (!allArticles.result) {
-      throw new Error('error occurred while inserting user');
+      console.log('No articles found in database');
+      return { articles: [] };
     }
-    console.log('all articles: ', allArticles.result.recordset);
+
     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
       return {
         id: a.DescriptionSeq,
-        content: a.HTML,
         slug: a.Description,
-        title: a.Description
+        title: a.Description,
+        content: a.HTML
       };
     });
+
     return { articles: mappedArticles };
   } catch (error) {
-    console.log(error);
-    throw new Error('error occurred while inserting user');
+    console.error('Error fetching articles:', error);
+    return { articles: [] };
   }
 }
-// export async function getArticle(slug: string): Promise<{
-//   article: Article;
-// }> {
-//   try {
-//     const allArticles = await getArticles();
-//     if (!allArticles.result) {
-//       throw new Error('error occurred while inserting user');
-//     }
-//     console.log('all articles: ', allArticles.result.recordset);
-//     const mappedArticles: Article[] = allArticles.result.recordset.map((a) => {
-//       return {
-//         id: a.DescriptionSeq,
-//         content: a.HTML,
-//         slug: a.Description,
-//         title: a.Description
-//       };
-//     });
-//     return { article: mappedArticles };
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error('error occurred while inserting user');
-//   }
-// }
+
+export async function getArticle(id: number): Promise<{
+  article: Article | null;
+}> {
+  try {
+    const maybeArticle = await getArticleFromStacc(id);
+    if (!maybeArticle.result) {
+      console.log('No articles found in database with id: ', id);
+      return { article: null };
+    }
+    const articleResponse = maybeArticle.result.recordset[0];
+    console.log(articleResponse);
+    return {
+      article: {
+        id: articleResponse.DescriptionSeq,
+        slug: articleResponse.Description,
+        title: articleResponse.Description,
+        content: articleResponse.HTML
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return { article: null };
+  }
+}
 
 export async function getVideoProgression(
   userId: number,
