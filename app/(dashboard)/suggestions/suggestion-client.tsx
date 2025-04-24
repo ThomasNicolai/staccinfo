@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PlusIcon, ThumbsUp } from 'lucide-react';
 import { SuggestionBox } from './suggestion-box';
 import { NewSuggestionButton } from './new-suggestion-button';
+import NavigationToolbar from './navigationtoolbar';
 
 export type Suggestion = {
   id: number;
@@ -35,43 +36,45 @@ export function SuggestionsClient({
         initialSuggestions.filter((suggestion) => suggestion.tag === tag)
       );
     }
-  };
+  }
+  const menuItems = [
+    {
+      label: 'All',
+      icon: '/All.png',
+      isActive: !selectedTag,
+      onClick: () => handleTagClick(undefined),
+    },
+    ...allTags.map((tag) => ({
+      label: tag,
+      icon: '/Tag.png',
+      isActive: selectedTag === tag,
+      onClick: () => handleTagClick(tag),
+    }))
+  ];
+
 
   return (
-    <div className="min-h-screen p-4 pt-16">
-      <div className="w-1/3 h-48 mt-4 rounded-xl mx-auto p-4 mb-4 bg-card dark:bg-card border-b border dark:border-border">
-        <h1 className="text-2xl text-center font-bold text-foreground dark:text-foreground">
-          Vi ønsker dine innspill
-        </h1>
-      </div>
-
-      <div className="flex flex-wrap gap-2 justify-center mb-6">
-        <button
-          onClick={() => handleTagClick(undefined)}
-          className={`px-4 py-2 rounded-full ${
-            !selectedTag
-              ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground'
-              : 'bg-muted text-muted-foreground hover:bg-muted dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted'
-          }`}
-        >
-          All
-        </button>
-
-        {allTags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => handleTagClick(tag)}
-            className={`px-4 py-2 rounded-full ${
-              selectedTag === tag
-                ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted'
-            }`}
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
-
+    <div className="flex flex-col relative items-center w-full min-h-screen overflow-y-auto overflow-hidden m-0 p-0">
+    {/* Title */}
+    <div className="flex flex-col items-center pt-20">
+      <h1 className="text-5xl font-bold">
+        Vi ønsker dine innspill!
+      </h1>
+    </div>
+    {/* Description */}
+    <div className="flex flex-col justify-center items-center pb-20">
+    <p className="text-[15px] mt-4">
+    Her får du fullstendig oversikt over dine moduler hos oss.
+  </p>
+  <p className="text-[15px]">
+    Dersom du ønsker flere moduler kan du ta
+    <a href="#" className="text-blue-500 hover:underline ml-1">kontakt med oss.</a>
+  </p>
+  </div>
+      {/* Navigation toolbar */}
+      <NavigationToolbar menuItems={menuItems} />
+      
+      {/* Suggestions grid */}
       <div className="flex h-auto space-x-4 mt-6 px-4 flex-wrap">
         <NewSuggestionButton />
         {displayedSuggestions.map((suggestion) => (
