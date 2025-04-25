@@ -1,5 +1,3 @@
-import Link from 'next/link';
-import { PlusIcon } from 'lucide-react';
 import { getSuggestions } from '@/lib/db';
 import { SuggestionsClient } from './suggestion-client';
 
