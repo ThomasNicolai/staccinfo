@@ -51,7 +51,7 @@ export default function TagFilterToolbar({
       {/* "All" option at the beginning */}
       <button
         onClick={() => handleTagClick(null)}
-        className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
+        className={`cursor-pointer transition-colors duration-200 mr-1 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
           selectedTag === null
             ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground'
             : 'hover:text-blue-500'
@@ -78,7 +78,7 @@ export default function TagFilterToolbar({
           <button
             key={index}
             onClick={() => handleTagClick(tag)}
-            className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
+            className={`cursor-pointer transition-colors duration-200 mr-1 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
               isActive
                 ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground'
                 : 'hover:text-blue-500'
