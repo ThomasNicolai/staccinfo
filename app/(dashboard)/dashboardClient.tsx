@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { UserContext } from './userContext';
 import { LicensesContext } from './licensesContext';
+import { ModuleCard } from 'app/(dashboard)/products/modulecard';
+import { getIconRefFromModuleName } from '@/lib/utils';
 
 export default function HomePageClient() {
   const userData = useContext(UserContext);
@@ -15,7 +17,7 @@ export default function HomePageClient() {
   const [activeIndex, setActiveIndex] = useState(0);
   const menuItems = [
     { label: 'Moduler', icon: 'Modules.png' },
-    { label: 'Rappporter', icon: 'Reports.png' },
+    { label: 'Rapporter', icon: 'Reports.png' },
     {
       label: 'Ekstra funksjonalitet',
       icon: 'Wand.png',
@@ -92,33 +94,19 @@ export default function HomePageClient() {
 
         {/* Show extra divs when 'Moduler' is selected */}
         {activeIndex === 0 && (
-          <div className="flex justify-center w-full h-[220px] gap-3">
-            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
-              <Link href="/suggestions">
-                <span className="hover:text-secondary font-bold">
-                  Aksjer og fond
-                </span>
-              </Link>
-              <p>Legge til funksjonalitet her</p>
-            </div>
-
-            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
-              <Link href="/suggestions">
-                <span className="hover:text-secondary font-bold">
-                  Eksempel 2
-                </span>
-              </Link>
-              <p>Legge til funksjonalitet her</p>
-            </div>
-
-            <div className="bg-card border dark:border-border p-4 rounded-[16px] w-full h-full flex flex-col">
-              <Link href="/suggestions">
-                <span className="hover:text-secondary font-bold">
-                  Eksempel 3
-                </span>
-              </Link>
-              <p>Legge til funksjonalitet her</p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-[1200px] auto-rows-[220px] px-6">
+            {licences.slice(0, 3).map((l: any, index: number) => (
+              <ModuleCard
+                key={index}
+                module={{
+                  title: l.ModuleName,
+                  hasModule: true,
+                  limitInfo: l.ModuleLevelName,
+                  href: '/products/modules/' + encodeURI(l.ProductName),
+                  imageUrl: getIconRefFromModuleName(l.ModuleName)
+                }}
+              />
+            ))}
           </div>
         )}
 
@@ -126,7 +114,7 @@ export default function HomePageClient() {
         {activeIndex === 1 && (
           <div className="flex justify-center w-full h-[220px] gap-3">
             <div className="bg-card border dark:border-border p-4 rounded-[16px] w-[350px] h-full flex flex-col">
-              <Link href="/suggestions">
+              <Link href="/products/reports">
                 <span className="hover:text-secondary font-bold">
                   Rapport 1
                 </span>
@@ -149,7 +137,7 @@ export default function HomePageClient() {
       {/* 'Se mer' box */}
       <div className="pt-5 pb-20">
         <Link
-          href="/products"
+          href="/products/modules"
           className="flex gap-2 justify-center items-center"
         >
           <span className="text-primary hover:text-secondary font-medium">
