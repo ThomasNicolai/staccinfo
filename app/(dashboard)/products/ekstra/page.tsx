@@ -44,7 +44,7 @@ export default function ExtraPage() {
 
           {/* Title and subtitle */}
           <div className="flex flex-col items-center pt-10">
-            <h1 className="text-7xl font-bold">Dine Verktøy</h1>
+            <h1 className="text-7xl font-bold">Dine verktøy</h1>
           </div>
 
           <div className="flex flex-col justify-center items-center pb-10">

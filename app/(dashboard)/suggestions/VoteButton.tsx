@@ -16,7 +16,10 @@ export function VoteButton({
   const [userHasVoted, setUserHasVoted] = useState(initialUserHasVoted);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleVoteClick = async () => {
+  const handleVoteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     setIsLoading(true);
     try {
       const result = await toggleVote(suggestionId);

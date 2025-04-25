@@ -29,6 +29,10 @@ export function getIconRefFromModuleName(moduleName: string): string {
       return '/lease.png';
     case 'Tolkning av kontrakter':
       return '/contract.png';
+    case 'Data manager':
+      return '/exploration.png';
+    case 'Grunnmodul':
+      return '/module.png';
     default:
       // Fallback
       return '/contract.png';
