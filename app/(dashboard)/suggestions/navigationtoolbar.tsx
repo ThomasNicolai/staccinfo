@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 interface MenuItem {
-    label: string;
-    icon: string;
-    href?: string;
-    onClick?: () => void;
-    isActive?: boolean;
-  }
+  label: string;
+  icon: string;
+  href?: string;
+  onClick?: () => void;
+  isActive?: boolean;
+}
 
 interface NavigationToolbarProps {
   menuItems: MenuItem[];
@@ -35,25 +35,24 @@ export default function NavigationToolbar({
           (isRootProductsPage && item.href === '/products/modules');
 
         return (
-        <button
-        key={index}
-        onClick={item.onClick}
-        className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
-            item.isActive
-            ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
-            : 'hover:text-blue-500'
-        }`}
-        >
-        <img
-            src={item.icon}
-            alt={`${item.label} icon`}
-            className={`w-5 h-5 transition duration-200 ${
-            item.isActive ? 'invert brightness-200' : ''
+          <button
+            key={index}
+            onClick={item.onClick}
+            className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
+              item.isActive
+                ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
+                : 'hover:text-blue-500'
             }`}
-        />
-        {item.label}
-        </button>
-
+          >
+            <img
+              src={item.icon}
+              alt={`${item.label} icon`}
+              className={`w-5 h-5 transition duration-200 ${
+                item.isActive ? 'invert brightness-200' : ''
+              }`}
+            />
+            {item.label}
+          </button>
         );
       })}
     </div>
