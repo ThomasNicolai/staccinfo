@@ -1,57 +1,107 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import {
+  BarChart,
+  LineChart,
+  FileText,
+  Database,
+  Settings,
+  LayoutGrid
+} from 'lucide-react';
 
-interface MenuItem {
-  label: string;
-  icon: string;
-  href?: string;
-  onClick?: () => void;
-  isActive?: boolean;
+interface TagFilterProps {
+  selectedTag: string | null;
+  onSelectTagAction: (tag: string | null) => void;
+  icons?: Record<string, React.ReactNode | string>;
 }
 
-interface NavigationToolbarProps {
-  menuItems: MenuItem[];
-  onNavigate?: (index: number) => void;
-}
+export default function TagFilterToolbar({
+  selectedTag,
+  onSelectTagAction,
+  icons = {}
+}: TagFilterProps) {
+  const staticTags = [
+    'Escali Financials',
+    'Escali Risk Management',
+    'Reports',
+    'Data Manager',
+    'Andre Tjenester'
+  ];
 
-export default function NavigationToolbar({
-  menuItems
-}: NavigationToolbarProps) {
-  const pathname = usePathname();
+  const defaultIcons: Record<string, React.ReactNode> = {
+    'Escali Financials': <BarChart className="w-5 h-5" />,
+    'Escali Risk Management': <LineChart className="w-5 h-5" />,
+    Reports: <FileText className="w-5 h-5" />,
+    'Data Manager': <Database className="w-5 h-5" />,
+    'Andre Tjenester': <Settings className="w-5 h-5" />
+  };
 
-  // Check if we're on the root products page
-  const isRootProductsPage =
-    pathname === '/products' || pathname === '/products/';
+  const handleTagClick = (tag: string | null) => {
+    if (tag === selectedTag) {
+      onSelectTagAction(null);
+    } else {
+      onSelectTagAction(tag);
+    }
+  };
+
+  // Update the button styling to maintain consistent sizing
 
   return (
     <div className="flex flex-wrap rounded-xl w-full bg-background dark:bg-background h-14 shadow-lg justify-center md:justify-between">
-      {menuItems.map((item, index) => {
-        // Fix: Add null check before calling startsWith
-        const isActive =
-          (item.href && pathname.startsWith(item.href)) ||
-          (isRootProductsPage && item.href === '/products/modules');
+      {/* "All" option at the beginning */}
+      <button
+        onClick={() => handleTagClick(null)}
+        className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
+          selectedTag === null
+            ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground'
+            : 'hover:text-blue-500'
+        }`}
+      >
+        <span
+          className={`flex items-center justify-center transition duration-200 ${
+            selectedTag === null
+              ? 'text-primary-foreground dark:text-secondary-foreground'
+              : ''
+          }`}
+        >
+          <LayoutGrid className="w-5 h-5" />
+        </span>
+        <span className="ml-2">All</span>
+      </button>
+
+      {/* Static tag filters */}
+      {staticTags.map((tag, index) => {
+        const isActive = selectedTag === tag;
+        const tagIcon = icons[tag] || defaultIcons[tag];
 
         return (
           <button
             key={index}
-            onClick={item.onClick}
-            className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center ${
-              item.isActive
-                ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground font-semibold'
+            onClick={() => handleTagClick(tag)}
+            className={`cursor-pointer transition-colors duration-200 py-2 w-full gap-2 text-center rounded-xl flex-1 flex items-center justify-center font-medium ${
+              isActive
+                ? 'bg-primary dark:bg-secondary text-primary-foreground dark:text-secondary-foreground'
                 : 'hover:text-blue-500'
             }`}
           >
-            <img
-              src={item.icon}
-              alt={`${item.label} icon`}
-              className={`w-5 h-5 transition duration-200 ${
-                item.isActive ? 'invert brightness-200' : ''
+            <span
+              className={`flex items-center justify-center transition duration-200 ${
+                isActive
+                  ? 'text-primary-foreground dark:text-secondary-foreground'
+                  : ''
               }`}
-            />
-            {item.label}
+            >
+              {typeof tagIcon === 'string' ? (
+                <img src={tagIcon} alt={`${tag} icon`} className="w-5 h-5" />
+              ) : tagIcon ? (
+                tagIcon
+              ) : (
+                <span className="w-5 h-5 flex items-center justify-center">
+                  •
+                </span>
+              )}
+            </span>
+            <span className="ml-2">{tag}</span>
           </button>
         );
       })}
