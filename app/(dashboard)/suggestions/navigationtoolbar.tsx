@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 interface MenuItem {
   label: string;
+  icon: string;
   href?: string;
   onClick?: () => void;
   isActive?: boolean;
