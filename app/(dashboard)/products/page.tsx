@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 import { ModuleCard } from 'app/(dashboard)/products/modulecard';

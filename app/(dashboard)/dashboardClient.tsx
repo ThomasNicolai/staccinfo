@@ -17,7 +17,7 @@ export default function HomePageClient() {
   const [activeIndex, setActiveIndex] = useState(0);
   const menuItems = [
     { label: 'Moduler', icon: 'Modules.png' },
-    { label: 'Rappporter', icon: 'Reports.png' },
+    { label: 'Rapporter', icon: 'Reports.png' },
     {
       label: 'Ekstra funksjonalitet',
       icon: 'Wand.png',
@@ -137,7 +137,7 @@ export default function HomePageClient() {
       {/* 'Se mer' box */}
       <div className="pt-5 pb-20">
         <Link
-          href="/products"
+          href="/products/modules"
           className="flex gap-2 justify-center items-center"
         >
           <span className="text-primary hover:text-secondary font-medium">

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useParams } from 'next/navigation';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 
