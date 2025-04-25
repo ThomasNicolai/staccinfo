@@ -15,6 +15,29 @@ export default async function Providers({
 }) {
   const session = await auth();
 
+  const mockSession = {
+    user: {
+      name: 'Development User',
+      email: 'dev@example.com',
+      image: 'https://github.com/ghost.png'
+    },
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString() // 1 week from now
+  };
+
+  const mockUser = {
+    id: 1,
+    role: 'admin',
+    username: 'developer',
+    created_at: new Date(),
+    full_name: 'Development User',
+    github_id: 'dev@example.com',
+    stacc_customer_seq: 1
+  };
+
+  const mockLicenses = [
+    { id: 1, name: 'Development License', status: 'active' }
+  ];
+
   if (!session) {
     redirect('/login');
   }
@@ -34,12 +57,13 @@ export default async function Providers({
     });
   }
   if (!userData.user.stacc_customer_seq) {
-    redirect('/no_permissions');
+    // Should be changed to redirect(/you-lack-permission)
+    redirect('/login');
   }
   const licences = (await getActiveLicenses(userData.user.stacc_customer_seq))
     .result;
   if (!licences) {
-    redirect('/no_permissions');
+    // redirect('/login');
   }
   console.log('Found licences in stacc database: ', licences);
   console.log('Found userData in database: ', userData);
@@ -52,10 +76,10 @@ export default async function Providers({
   };
   return (
     <TooltipProvider>
-      <SessionProvider session={session}>
+      <SessionProvider session={mockSession}>
         <ThemeProvider attribute="class" defaultTheme="system">
-          <UserContext user={userData.user}>
-            <LicensesContext licenses={licences.recordset}>
+          <UserContext user={mockUser}>
+            <LicensesContext licenses={mockLicenses}>
               {children}
             </LicensesContext>
           </UserContext>

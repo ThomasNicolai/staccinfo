@@ -44,8 +44,6 @@ export default function ModulesPage() {
         <div className="w-full h-full rounded-full bg-background dark:bg-background"></div>
       </div>
 
-      <div className="absolute top-0 right-0 w-[350px] h-[350px] bg-gradient-to-br from-[#7590fa] to-[#bfcafa] rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
-
       {/* Header section */}
       <div className="relative z-10 pt-6 px-6">
         <div className="w-full max-w-[1200px] mx-auto">
