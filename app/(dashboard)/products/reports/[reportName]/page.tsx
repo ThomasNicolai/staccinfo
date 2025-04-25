@@ -1,4 +1,3 @@
-import React from 'react';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 
 export default async function ReportPage({
