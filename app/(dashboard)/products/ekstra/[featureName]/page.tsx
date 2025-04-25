@@ -1,20 +1,21 @@
+// File: app/(dashboard)/products/ekstra/[featureName]/page.tsx
 'use client';
 
 import { useParams } from 'next/navigation';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 
-export default function ModuleDetailPage() {
-  // Get the module name from URL params
-  const params = useParams();
-  const moduleName = params.moduleName as string;
+export default function ExtraFeatureDetailPage() {
+  const { featureName } = useParams() as { featureName?: string };
 
-  // Format module name for display (capitalize and replace hyphens)
-  const displayModuleName = moduleName
+  if (!featureName) {
+    return <div className="p-6">Fant ikke funksjonaliteten.</div>;
+  }
+
+  const displayFeatureName = featureName
     .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
-  // Menu items for the navigation toolbar
   const menuItems = [
     { label: 'Moduler', icon: '/Modules.png', href: '/products/modules' },
     { label: 'Rapporter', icon: '/Reports.png', href: '/products/reports' },
@@ -40,15 +41,17 @@ export default function ModuleDetailPage() {
       {/* Header section */}
       <div className="relative z-10 pt-6 px-6">
         <div className="w-full max-w-[1200px] mx-auto">
-          {/* Title and subtitle */}
+          {/* Title */}
           <div className="flex flex-col items-center pt-10">
-            <h1 className="text-7xl font-bold">{displayModuleName}</h1>
+            <h1 className="text-7xl font-bold">{displayFeatureName}</h1>
           </div>
 
+          {/* Two-line descriptive subtitle */}
           <div className="flex flex-col justify-center items-center pb-10">
             <p className="mt-4 text-[15px] text-center max-w-xl pt-3">
-              Detailed information about the {displayModuleName.toLowerCase()}{' '}
-              module.
+              Her får du en fullstendig oversikt over alle verktøy under{' '}
+              {displayFeatureName}.<br />
+              Utforsk funksjoner, mulige oppsett og eksempler på bruk.
             </p>
           </div>
 
@@ -57,27 +60,13 @@ export default function ModuleDetailPage() {
         </div>
       </div>
 
-      {/* Content section */}
+      {/* Placeholder content section */}
       <div className="mt-10 w-full flex justify-center pb-20 relative z-10">
         <div className="w-full max-w-[1400px] mx-auto px-6">
-          <div className="bg-card dark:bg-card border dark:border-border shadow-lg rounded-xl p-6">
-            <h2 className="text-3xl font-bold mb-4 text-foreground dark:text-foreground">
-              {displayModuleName}
-            </h2>
-            <p className="text-lg mb-6 text-muted-foreground dark:text-muted-foreground">
-              This is a placeholder for the "{displayModuleName}" module.
+          <div className="bg-card dark:bg-card border dark:border-border shadow-lg rounded-xl p-6 min-h-[500px]">
+            <p className="text-lg mb-6 text-center text-gray-700">
+              Dette er en placeholder for {displayFeatureName}-funksjonaliteten.
             </p>
-
-            {/* Additional module content can be added here */}
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-3">Features</h3>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Feature 1: Description of feature</li>
-                <li>Feature 2: Description of feature</li>
-                <li>Feature 3: Description of feature</li>
-                <li>Feature 4: Description of feature</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>

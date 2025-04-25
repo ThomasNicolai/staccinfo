@@ -2,17 +2,20 @@
 
 import Link from 'next/link';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
-import { ModuleCard } from 'app/(dashboard)/products/modulecard';
 
-export default function ModulesPage() {
-  // Menu items for the navigation toolbar
+type Feature = {
+  title: string;
+  href: string;
+};
+
+export default function ExtraPage() {
   const menuItems = [
     { label: 'Moduler', icon: '/Modules.png', href: '/products/modules' },
     { label: 'Rapporter', icon: '/Reports.png', href: '/products/reports' },
     {
       label: 'Ekstra funksjonalitet',
       icon: '/Wand.png',
-      href: '/products/extra'
+      href: '/products/ekstra'
     },
     {
       label: 'Andre tjenester',
@@ -21,96 +24,10 @@ export default function ModulesPage() {
     }
   ];
 
-  // Array med alle mulige moduler - moved from SharedPageWrapper
-  const modules = [
-    {
-      title: 'Aksjer og fond',
-      href: '/products/modules/aksjer-fond',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/stock.png'
-    },
-    {
-      title: 'Obligasjoner',
-      href: '/products/modules/obligasjoner',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/agreement.png'
-    },
-    {
-      title: 'Intern Handler',
-      href: '/products/modules/intern-handler',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/handler.png'
-    },
-    {
-      title: 'Derivater',
-      href: '/products/modules/derivater',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/derivatives.png'
-    },
-    {
-      title: 'FX Derivater',
-      href: '/products/modules/fx-derivater',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/exchange-rate.png'
-    },
-    {
-      title: 'Rentederivater',
-      href: '/products/modules/rentederivater',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/tax.png'
-    },
-    {
-      title: 'Gjeld',
-      href: '/products/modules/gjeld',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/borrow.png'
-    },
-    {
-      title: 'Internal bank/lending',
-      href: '/products/modules/internal-bank-lending',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/lend.png'
-    },
-    {
-      title: 'Funds transparency',
-      href: '/products/modules/funds-transparency',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/tran.png'
-    },
-    {
-      title: 'Leasing module',
-      href: '/products/modules/leasing-module',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/lease.png'
-    },
-    {
-      title: 'Interpretation of contract notes',
-      href: '/products/modules/interpretation-contract-notes',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/contract.png'
-    }
+  const features: Feature[] = [
+    { title: 'Settlement', href: '/products/ekstra/settlement' },
+    { title: 'Asset Management', href: '/products/ekstra/asset-management' },
+    { title: 'Risk Manager', href: '/products/ekstra/risk-manager' }
   ];
 
   return (
@@ -127,15 +44,15 @@ export default function ModulesPage() {
 
           {/* Title and subtitle */}
           <div className="flex flex-col items-center pt-10">
-            <h1 className="text-7xl font-bold">Dine verktøy</h1>
+            <h1 className="text-7xl font-bold">Dine Verktøy</h1>
           </div>
 
           <div className="flex flex-col justify-center items-center pb-10">
             <p className="mt-4 text-[15px] text-center max-w-xl pt-3">
-              Her får du fullstendig oversikt over dine moduler hos oss. Dersom
-              du ønsker flere moduler kan du ta{' '}
-              <Link href="/products">
-                <span className="text-primary dark:text-primary hover:text-accent dark:hover:text-accent font-medium">
+              På denne siden finner du ekstra funksjonalitet og avanserte
+              verktøy. Ved spørsmål kan du ta{' '}
+              <Link href="/suggestions">
+                <span className="text-primary dark:text-primary hover:text-blue dark:hover:text-accent font-medium">
                   kontakt med oss
                 </span>
               </Link>
@@ -146,11 +63,21 @@ export default function ModulesPage() {
         </div>
       </div>
 
-      {/* Modules grid */}
-      <div className="mt-10 w-full flex justify-center pb-20 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-[1200px] auto-rows-[220px] px-6">
-          {modules.map((module, index) => (
-            <ModuleCard key={index} module={module} />
+      {/* Grid med like store kort */}
+      <div className="mt-10 pb-20 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] max-w-[1200px] mx-auto px-6">
+          {features.map((feat) => (
+            <Link key={feat.href} href={feat.href}>
+              <div
+                className="bg-card dark:bg-card border dark:border-border
+                           p-4 rounded-[16px]
+                           flex flex-col items-center justify-center
+                           h-full cursor-pointer
+                           hover:shadow-lg transition-shadow"
+              >
+                <span className="text-lg font-bold">{feat.title}</span>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
