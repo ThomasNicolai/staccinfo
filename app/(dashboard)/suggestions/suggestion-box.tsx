@@ -20,9 +20,11 @@ export function SuggestionBox({ suggestion }: SuggestionBoxProps) {
   // State to hold the formatted date
   const [formattedDate, setFormattedDate] = useState<string>('');
 
-  // Format date on client side only
+  // Format date on client side only to prevent hydration mismatch
   useEffect(() => {
-    setFormattedDate(new Date(suggestion.created_at).toLocaleDateString());
+    // Consistent date formatting to avoid hydration issues
+    const date = new Date(suggestion.created_at);
+    setFormattedDate(date.toLocaleDateString());
   }, [suggestion.created_at]);
 
   return (
@@ -35,17 +37,19 @@ export function SuggestionBox({ suggestion }: SuggestionBoxProps) {
           <p className="font-bold line-clamp-2">{suggestion.text}</p>
         </div>
 
-        <div className="mt-auto text-sm text-muted-foreground space-y-1">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="mt-auto text-sm text-muted-foreground space-y-1"
+        >
           {suggestion.is_anonymous ? (
             <p>Posted by: Anonymous</p>
           ) : (
             <p>User ID: {suggestion.user_id}</p>
           )}
 
-          {/* Use the client-side formatted date */}
+          {/* Client-side rendered date */}
           <p>Created: {formattedDate}</p>
 
-          {/* Vote button */}
           <VoteButton
             suggestionId={suggestion.id}
             initialVoteCount={suggestion.vote_count ?? 0}

@@ -2,6 +2,7 @@
 
 import { postSuggestion as dbPostSuggestion, voteSuggestion } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/lib/auth';
 
 export async function createSuggestion(formData: FormData) {
   try {
@@ -10,7 +11,7 @@ export async function createSuggestion(formData: FormData) {
     const isAnonymousStr = formData.get('isAnonymous') as string;
     const isAnonymous = isAnonymousStr === 'true';
     
-    // Validate inputs
+   
     if (!suggestionText || suggestionText.trim() === '') {
       return { success: false, error: 'Suggestion text is required' };
     }
@@ -19,13 +20,13 @@ export async function createSuggestion(formData: FormData) {
       return { success: false, error: 'Tag is required' };
     }
 
-    // Using a default user ID for now (in a real app, this would come from authentication)
+    
     const userId = 1; 
     
-    // Call the database function
+    
     const result = await dbPostSuggestion(suggestionText, userId, tag, isAnonymous);
     
-    // Revalidate the suggestions page to show the new suggestion
+   
     revalidatePath('/suggestions');
     
     return { 
@@ -41,24 +42,35 @@ export async function createSuggestion(formData: FormData) {
   }
 }
 
-// Add the toggleVote function
 export async function toggleVote(suggestionId: number) {
   try {
-    // Use a dummy user ID for now (in a real app, this would come from auth)
-    const userId = 1;
+    const session = await auth();
+    if (!session || !session.user?.email) {
+      return {
+        success: false,
+        message: 'You must be logged in to vote'
+      };
+    }
+
+  
+    const userId = session.user.id;
+    if (!userId) {
+      return {
+        success: false,
+        message: 'User ID not found in session'
+      };
+    }
+
+   
+    const userIdNumber = parseInt(userId as string, 10);
     
-    // Call the database function
-    const result = await voteSuggestion(suggestionId, userId);
-    
-    // Revalidate the suggestion detail page
-    revalidatePath(`/suggestions/${suggestionId}`);
-    
+    const result = await voteSuggestion(suggestionId, userIdNumber);
     return result;
   } catch (error) {
-    console.error('Error toggling vote:', error);
-    return { 
-      success: false, 
-      message: error instanceof Error ? error.message : 'Failed to vote' 
+    console.error('Error in toggleVote action:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
     };
   }
 }
