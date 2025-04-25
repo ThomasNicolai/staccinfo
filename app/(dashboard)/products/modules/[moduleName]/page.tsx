@@ -22,7 +22,7 @@ export default function ModuleDetailPage() {
     {
       label: 'Ekstra funksjonalitet',
       icon: '/Wand.png',
-      href: '/products/extra'
+      href: '/products/ekstra'
     },
     {
       label: 'Andre tjenester',
