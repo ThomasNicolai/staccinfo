@@ -5,6 +5,7 @@ import Link from 'next/link';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 import { ModuleCard } from 'app/(dashboard)/products/modulecard';
 import { LicensesContext } from 'app/(dashboard)/licensesContext';
+import { getIconRefFromModuleName } from '@/lib/utils';
 
 export default function ModulesPage() {
   // Menu items for the navigation toolbar
@@ -33,7 +34,7 @@ export default function ModulesPage() {
       hasModule: true,
       limitInfo: l.ModuleLevelName,
       href: '/products/modules/' + encodeURI(l.ProductName),
-      imageUrl: '/stock.png'
+      imageUrl: getIconRefFromModuleName(l.ModuleName)
     };
   });
 
