@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { UserContext } from './userContext';
 import { LicensesContext } from './licensesContext';
 import { ModuleCard } from 'app/(dashboard)/products/modulecard';
-
+import { getIconRefFromModuleName } from '@/lib/utils';
 
 export default function HomePageClient() {
   const userData = useContext(UserContext);
@@ -94,7 +94,7 @@ export default function HomePageClient() {
 
         {/* Show extra divs when 'Moduler' is selected */}
         {activeIndex === 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-[1200px] auto-rows-[220px] px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-[1200px] auto-rows-[220px] px-6">
             {licences.slice(0, 3).map((l: any, index: number) => (
               <ModuleCard
                 key={index}
@@ -103,7 +103,7 @@ export default function HomePageClient() {
                   hasModule: true,
                   limitInfo: l.ModuleLevelName,
                   href: '/products/modules/' + encodeURI(l.ProductName),
-                  imageUrl: '/stock.png'
+                  imageUrl: getIconRefFromModuleName(l.ModuleName)
                 }}
               />
             ))}
