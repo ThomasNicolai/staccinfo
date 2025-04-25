@@ -34,13 +34,12 @@ export default async function Providers({
     });
   }
   if (!userData.user.stacc_customer_seq) {
-    // Should be changed to redirect(/you-lack-permission)
     redirect('/no_permissions');
   }
   const licences = (await getActiveLicenses(userData.user.stacc_customer_seq))
     .result;
   if (!licences) {
-    redirect('/login');
+    redirect('/no_permissions');
   }
   console.log('Found licences in stacc database: ', licences);
   console.log('Found userData in database: ', userData);
