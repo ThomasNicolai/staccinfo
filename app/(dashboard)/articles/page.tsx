@@ -1,4 +1,3 @@
-import React from 'react';
 import { getArticles } from '@/lib/db';
 import ArticleCard from './articleCard';
 
