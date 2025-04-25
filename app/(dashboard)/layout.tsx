@@ -62,7 +62,7 @@ function DesktopNav() {
           <BookOpenText className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/products" label="Products">
+        <NavItem href="/products/modules" label="Products">
           <Grid2X2 className="h-5 w-5" />
         </NavItem>
 

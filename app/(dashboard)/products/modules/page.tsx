@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import { useContext } from 'react';
 import Link from 'next/link';
 import NavigationToolbar from 'app/(dashboard)/products/NavigationToolbar';
 import { ModuleCard } from 'app/(dashboard)/products/modulecard';
+import { LicensesContext } from 'app/(dashboard)/licensesContext';
 
 export default function ModulesPage() {
   // Menu items for the navigation toolbar
@@ -13,106 +14,28 @@ export default function ModulesPage() {
     {
       label: 'Ekstra funksjonalitet',
       icon: '/Wand.png',
-      href: '/products/extra'
+      href: './'
     },
     {
       label: 'Andre tjenester',
       icon: '/Service.png',
-      href: '/products/services'
+      href: './'
     }
   ];
 
   // Array med alle mulige moduler - moved from SharedPageWrapper
-  const modules = [
-    {
-      title: 'Aksjer og fond',
-      href: '/products/modules/aksjer-fond',
+  const licences = useContext(LicensesContext);
+  console.log('licnences:');
+  console.log(licences);
+  const modules = licences.map((l: any) => {
+    return {
+      title: l.ModuleName,
       hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
+      limitInfo: l.ModuleLevelName,
+      href: '/products/modules/' + encodeURI(l.ProductName),
       imageUrl: '/stock.png'
-    },
-    {
-      title: 'Obligasjoner',
-      href: '/products/modules/obligasjoner',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/agreement.png'
-    },
-    {
-      title: 'Intern Handler',
-      href: '/products/modules/intern-handler',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/handler.png'
-    },
-    {
-      title: 'Derivater',
-      href: '/products/modules/derivater',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/derivatives.png'
-    },
-    {
-      title: 'FX Derivater',
-      href: '/products/modules/fx-derivater',
-      hasModule: false,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/exchange-rate.png'
-    },
-    {
-      title: 'Rentederivater',
-      href: '/products/modules/rentederivater',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/tax.png'
-    },
-    {
-      title: 'Gjeld',
-      href: '/products/modules/gjeld',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/borrow.png'
-    },
-    {
-      title: 'Internal bank/lending',
-      href: '/products/modules/internal-bank-lending',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/lend.png'
-    },
-    {
-      title: 'Funds transparency',
-      href: '/products/modules/funds-transparency',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/tran.png'
-    },
-    {
-      title: 'Leasing module',
-      href: '/products/modules/leasing-module',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/lease.png'
-    },
-    {
-      title: 'Interpretation of contract notes',
-      href: '/products/modules/interpretation-contract-notes',
-      hasModule: true,
-      limitInfo: '250 MNOK i transaksjoner',
-      yearlyTransactions: 100,
-      imageUrl: '/contract.png'
-    }
-  ];
+    };
+  });
 
   return (
     <div className="relative min-h-screen">
@@ -150,7 +73,7 @@ export default function ModulesPage() {
       {/* Modules grid */}
       <div className="mt-10 w-full flex justify-center pb-20 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-[1200px] auto-rows-[220px] px-6">
-          {modules.map((module, index) => (
+          {modules.map((module: any, index: number) => (
             <ModuleCard key={index} module={module} />
           ))}
         </div>
